@@ -1,5 +1,5 @@
 # README #
 
 Requirements:
-* Maven
-* Java 8
+*Maven
+*Java 8
