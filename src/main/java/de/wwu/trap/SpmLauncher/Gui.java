@@ -99,15 +99,18 @@ public class Gui {
 		scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scrollPane.setBounds(12, 142, 412, 394);
+		scrollPane.setBounds(12, 142, 412, 367);
 		frame.getContentPane().add(scrollPane);
 
 		JButton bttnStartSpm = new JButton("Start SPM");
+		bttnStartSpm.setLocation(158, 520);
+		bttnStartSpm.setSize(111, 30);
 		bttnStartSpm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
 			}
 		});
+		frame.getContentPane().add(bttnStartSpm);
 
 		verticalBox = Box.createVerticalBox();
 		scrollPane.setViewportView(verticalBox);
