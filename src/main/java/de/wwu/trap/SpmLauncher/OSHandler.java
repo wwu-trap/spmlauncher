@@ -1,6 +1,7 @@
 package de.wwu.trap.SpmLauncher;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class OSHandler {
 
@@ -20,17 +21,9 @@ public class OSHandler {
 
 			};
 		}
-
+		Arrays.sort(spms);
 		return spms;
 	}
-	
-	public static File[][] getToolbox(String spmVersion){
-		File spmDir = new File(App.MANAGED_SOFTWARE_DIR, "toolbox");
-		
-		
-		
-		
-		return null;
-	}
+
 
 }
