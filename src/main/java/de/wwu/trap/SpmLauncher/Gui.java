@@ -177,7 +177,7 @@ public class Gui {
 		verticalBox.add(verticalStrut);
 
 		Box horizontalBox = Box.createHorizontalBox();
-		horizontalBox.setMaximumSize(new Dimension(10000, 20));
+		horizontalBox.setMaximumSize(new Dimension(10000, 30));
 
 		Component horizontalStrut = Box.createHorizontalStrut(20);
 		horizontalBox.add(horizontalStrut);
