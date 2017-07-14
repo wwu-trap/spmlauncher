@@ -77,25 +77,6 @@ public class Gui {
 		lblToolboxes.setBounds(12, 111, 100, 20);
 		frame.getContentPane().add(lblToolboxes);
 
-		/*
-		 * JPanel panel = new JPanel(); panel.setLayout(new GridLayout(3, 2, 5,
-		 * 5));
-		 * 
-		 * JCheckBox chckbxCat = new JCheckBox("cat"); panel.add(chckbxCat);
-		 * 
-		 * JComboBox comboBox_1 = new JComboBox(); panel.add(comboBox_1);
-		 * 
-		 * JCheckBox chckbxTfce = new JCheckBox("TFCE"); panel.add(chckbxTfce);
-		 * 
-		 * JComboBox comboBox_2 = new JComboBox(); panel.add(comboBox_2);
-		 * 
-		 * JCheckBox chckbxWasAnderesAsdasdasdasdasd = new
-		 * JCheckBox("was anderes asdasdasdasdasd");
-		 * panel.add(chckbxWasAnderesAsdasdasdasdasd);
-		 * 
-		 * JComboBox comboBox_3 = new JComboBox(); panel.add(comboBox_3);
-		 */
-
 		scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -139,6 +120,7 @@ public class Gui {
 				return pathname.isDirectory();
 			}
 		});
+		
 
 		if (toolboxes == null) {
 			return;
