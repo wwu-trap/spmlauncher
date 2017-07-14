@@ -28,62 +28,96 @@ public class OSHandler {
 		return spms;
 	}
 
-	public void createMounts(File spmDir, File[] toolboxes){
+	public void createMounts(File spmDir, File[] toolboxes) {
 		UUID uuid = UUID.randomUUID();
-		
+
 		File uuidDir = new File(App.MOUNT_DIR, "/" + uuid.toString());
 		uuidDir.mkdirs();
-		
-		
-		
-		
+
 	}
 
-	
 	public static void main(String[] args) {
 		UUID uuid = UUID.randomUUID();
-		File oldDir = new File("/opt/applications/PI2T_Beta04.0_Distribute/");
+		File oldDir = new File("/opt/applications/SPMLauncher/ManagedSoftware/toolbox");
 		File newDir = new File(App.MOUNT_DIR + "/" + uuid.toString());
-		System.out.println(newDir + " " + newDir.mkdirs());
-		
+//		System.out.println(newDir + " " + newDir.mkdirs());
+
 		mount(oldDir, newDir);
-	}
-	
-	public static void umount(File dir){
-		
-	}
-	
-	public static void mount(File oldDir, File newDir){
-		String newPath = newDir.getAbsolutePath();
-		if(!newPath.startsWith(App.MOUNT_DIR + "/")){
-			return;
-		}
-		
-		if(!newDir.mkdirs() && !newDir.exists()){
-			System.err.println("Could not create" + newDir.getAbsolutePath());
-			return;
-		}
-		
-		String relativePath = newPath.replaceFirst(App.MOUNT_DIR + "/", "");
-		String[] cmd = new String[]{"sudo", App.MOUNT_SCRIPT, "-m", oldDir.getAbsolutePath(), relativePath};
-		
 		
 		try {
+			Thread.sleep(8000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		umount(newDir);
+	}
+
+	public static void umount(File dir) {
+		String path = dir.getAbsolutePath();
+		if (!path.startsWith(App.MOUNT_DIR + "/")) {
+			return;
+		}
+		String relativePath = path.replaceFirst(App.MOUNT_DIR + "/", "");
+
+		String[] cmd = new String[] { "sudo", App.MOUNT_SCRIPT, "-u", relativePath};
+
+		try {
 			Process p = new ProcessBuilder(cmd).start();
-			
-			
-			BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-			String line = "";
-			while((line = br.readLine()) != null){
-				System.out.println(line);
-			}
-			
-			System.out.println(p.waitFor());
+
+//			BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+//			String line = "";
+//			while ((line = br.readLine()) != null) {
+//				System.out.println(line);
+//			}
+
+//			System.out.println(p.waitFor());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
+		boolean empty = dir.listFiles().length == 0;
+		if(dir.exists() && dir.isDirectory() && empty){
+			dir.delete();
+		}
+		
 	}
-	
-	
+
+	public static void mount(File oldDir, File newDir) {
+		String oldPath = oldDir.getAbsolutePath();
+		if (!oldPath.startsWith(App.MANAGED_SOFTWARE_DIR + "/")) {
+			return;
+		}
+		String oldRelativePath = oldPath.replaceFirst(App.MANAGED_SOFTWARE_DIR + "/", "");
+
+		String newPath = newDir.getAbsolutePath();
+		if (!newPath.startsWith(App.MOUNT_DIR + "/")) {
+			return;
+		}
+		String newRelativePath = newPath.replaceFirst(App.MOUNT_DIR + "/", "");
+
+		if (!newDir.mkdirs() && !newDir.exists()) {
+			System.err.println("Could not create" + newDir.getAbsolutePath());
+			return;
+		}
+
+		String[] cmd = new String[] { "sudo", App.MOUNT_SCRIPT, "-m", oldRelativePath, newRelativePath };
+
+		try {
+			Process p = new ProcessBuilder(cmd).start();
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+//			String line = "";
+//			while ((line = br.readLine()) != null) {
+//				System.out.println(line);
+//			}
+//
+//			System.out.println(p.waitFor());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 }
