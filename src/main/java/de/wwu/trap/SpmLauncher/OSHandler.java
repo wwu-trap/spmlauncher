@@ -1,8 +1,6 @@
 package de.wwu.trap.SpmLauncher;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -47,7 +45,6 @@ public class OSHandler {
 		try {
 			Thread.sleep(8000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -64,7 +61,7 @@ public class OSHandler {
 		String[] cmd = new String[] { "sudo", App.MOUNT_SCRIPT, "-u", relativePath};
 
 		try {
-			Process p = new ProcessBuilder(cmd).start();
+			/*Process p =*/ new ProcessBuilder(cmd).start();
 
 //			BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 //			String line = "";
@@ -105,9 +102,9 @@ public class OSHandler {
 		String[] cmd = new String[] { "sudo", App.MOUNT_SCRIPT, "-m", oldRelativePath, newRelativePath };
 
 		try {
-			Process p = new ProcessBuilder(cmd).start();
+			/*Process p =*/ new ProcessBuilder(cmd).start();
 
-			BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+//			BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 //			String line = "";
 //			while ((line = br.readLine()) != null) {
 //				System.out.println(line);
