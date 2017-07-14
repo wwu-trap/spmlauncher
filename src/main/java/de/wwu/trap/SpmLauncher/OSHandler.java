@@ -103,7 +103,7 @@ public class OSHandler {
 
 	/**
 	 * Tries to mount (via rebind) oldDir to newDir. oldDir has to be subdir of
-	 * App.MANAGED_SOFTWARE_DIR abd newDir has to be subdir of App.MOUNT_DIR
+	 * App.MANAGED_SOFTWARE_DIR and newDir has to be subdir of App.MOUNT_DIR
 	 * Tries to mount with sudo App.MOUNT_SCRIPT -m
 	 * 
 	 * @param oldDir
