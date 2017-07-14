@@ -2,7 +2,7 @@
 
 
 # place this file in /usr/local/bin/tmp-mount
-# to let anyone use this command use, add the following to the sudoers file:
+# to let anyone use this command use, add the following to the !!END!! of the sudoers file:
 # ALL ALL=NOPASSWD: /usr/local/bin/tmp-mount
 # and don't forget to chmod +x this file!
 
