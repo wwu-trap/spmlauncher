@@ -34,7 +34,7 @@ public class OSHandler {
 
 			};
 		}
-		Arrays.sort(spms);
+		Arrays.sort(spms, new FileComparator<File>());
 		return spms;
 	}
 

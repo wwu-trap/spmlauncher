@@ -40,7 +40,7 @@ public class Gui {
 	 */
 	private void initialize() {
 
-		frame = new JFrame();
+		frame = new JFrame("SPM Launcher");
 		frame.setBounds(100, 100, 450, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -121,6 +121,7 @@ public class Gui {
 			}
 		});
 		
+		Arrays.sort(toolboxes, new FileComparator<File>());
 
 		if (toolboxes == null) {
 			return;
@@ -142,7 +143,7 @@ public class Gui {
 	}
 
 	private void addToolBox(File[] versions) {
-		Arrays.sort(versions, Collections.reverseOrder());
+		Arrays.sort(versions, new FileComparator<File>(true));
 		if (versions == null || versions.length == 0) {
 			return;
 		}
