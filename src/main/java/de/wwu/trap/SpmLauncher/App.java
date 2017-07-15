@@ -1,10 +1,8 @@
 package de.wwu.trap.SpmLauncher;
 
-import java.awt.EventQueue;
-
 import javax.swing.UIManager;
 
-import org.pushingpixels.substance.api.skin.SubstanceMarinerLookAndFeel;
+import Gui.GuiSteuerung;
 
 /**
  * 
@@ -18,22 +16,12 @@ public class App {
 
 	public static void main(String[] args) {
 		try {
-//			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			UIManager.setLookAndFeel(new SubstanceMarinerLookAndFeel());
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
 		}
 
 		
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Gui gui = new Gui();
-					gui.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		new GuiSteuerung().startGui();
 		
 
 	}

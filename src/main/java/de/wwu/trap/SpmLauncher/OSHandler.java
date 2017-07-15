@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.UUID;
 
+import Utils.FileComparator;
+
 /**
  * This class holds static methods to do stuff related to the OS like
  * manipulating the filesystem

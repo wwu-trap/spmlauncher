@@ -1,4 +1,4 @@
-package de.wwu.trap.SpmLauncher;
+package Utils;
 
 import java.io.File;
 import java.util.Comparator;
