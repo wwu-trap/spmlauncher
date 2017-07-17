@@ -19,8 +19,6 @@ import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import javax.swing.JScrollPane;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.Box;
 import javax.swing.JCheckBox;
@@ -35,6 +33,7 @@ public class Gui {
 
 	JFrame frame;
 	JComboBox<File> spmVersionComboBox;
+	JButton bttnStartSpm;
 
 	/**
 	 * Create the application.
@@ -80,14 +79,9 @@ public class Gui {
 		scrollPane.setBounds(12, 142, 412, 367);
 		frame.getContentPane().add(scrollPane);
 
-		JButton bttnStartSpm = new JButton("Start SPM");
+		bttnStartSpm = new JButton("Start SPM");
 		bttnStartSpm.setLocation(158, 520);
 		bttnStartSpm.setSize(111, 30);
-		bttnStartSpm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
 		frame.getContentPane().add(bttnStartSpm);
 
 		verticalBox = Box.createVerticalBox();
@@ -104,7 +98,7 @@ public class Gui {
 	}
 
 	private GroupLayout groupLayout;
-	private LinkedList<JComboBox<File>> comboxBoxList = new LinkedList<>();
+	LinkedList<JComboBox<File>> comboxBoxList = new LinkedList<>();
 	private ParallelGroup checkBoxGroup;
 	private ParallelGroup comboBoxGroup;
 	private SequentialGroup pairGroup;

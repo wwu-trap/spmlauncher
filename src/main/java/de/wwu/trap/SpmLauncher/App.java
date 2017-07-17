@@ -15,6 +15,7 @@ public class App {
 	public static final String MOUNT_SCRIPT = "/usr/local/bin/tmp-mount";
 
 	public static void main(String[] args) {
+		long t1 = System.currentTimeMillis();
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
@@ -22,7 +23,7 @@ public class App {
 
 		
 		new GuiSteuerung().startGui();
-		
+		System.out.println(System.currentTimeMillis() - t1);
 
 	}
 }

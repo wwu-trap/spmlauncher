@@ -41,23 +41,46 @@ public class OSHandler {
 	}
 
 	/**
+	 * 
+	 */
+
+	/**
 	 * This method mounts the spm installation wth the chosen toolboxes to a
 	 * temporary directory (e.g.
 	 * App.MOUNT_DIR/6d9e5da2-cd28-43c8-af46-9f5e3e29d7de), so spm can be
-	 * started with and only with the specified toolboxses
+	 * started with and only with the specified toolboxes
 	 * 
 	 * @param spmDir
 	 *            the path to the chosen spm installation
 	 * @param toolboxes
 	 *            the paths to the chosen versions of the toolboxes
 	 */
-	public boolean createMounts(File spmDir, File[] toolboxes) {
-		//TODO complete createMounts
+	public static boolean createMounts(UUID uuid, File spmDir, File[] toolboxes) {
+		// TODO complete createMounts. Don't forget: log to info file
 		boolean ret = false;
-		UUID uuid = UUID.randomUUID();
 
 		File uuidDir = new File(App.MOUNT_DIR, "/" + uuid.toString());
 		uuidDir.mkdirs();
+
+		
+		
+		
+		
+		mount(spmDir, uuidDir);
+
+		return ret;
+	}
+
+	/**
+	 * This method checks, whether the SPM-installation has the necessary
+	 * subdirs to create the mounts for the toolboxes
+	 * 
+	 * @param spmDir the dir of the SPM-installation
+	 * @return whether the subdirs exist
+	 */
+	public static boolean checkForNecessarySubdirsForToolboxes(File spmDir) {
+		boolean ret = false;
+		//TODO complete check for subtirs in toolbox dir
 
 		return ret;
 	}
