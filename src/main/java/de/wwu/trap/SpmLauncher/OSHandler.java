@@ -1,10 +1,13 @@
 package de.wwu.trap.SpmLauncher;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.UUID;
-
+import java.util.Collection;
 import Utils.FileComparator;
+import Utils.FileManipulator;
 
 /**
  * This class holds static methods to do stuff related to the OS like
@@ -35,26 +38,82 @@ public class OSHandler {
 	}
 
 	/**
-	 * This method mounts the spm installation wth the chosen toolboxes to a
+	 * This method mounts the spm installation with the chosen toolboxes to a
 	 * temporary directory (e.g.
 	 * App.MOUNT_DIR/6d9e5da2-cd28-43c8-af46-9f5e3e29d7de), so spm can be
-	 * started with and only with the specified toolboxes
+	 * started with and only with the specified toolboxes. It also creates a log
+	 * file in case this Launcher crashes.
 	 * 
 	 * @param spmDir
 	 *            the path to the chosen spm installation
 	 * @param toolboxes
 	 *            the paths to the chosen versions of the toolboxes
 	 */
-	public static boolean createMounts(UUID uuid, File spmDir, File[] toolboxes) {
+	public static boolean createMounts(File spmDir, Collection<File> toolboxes) {
 		// TODO complete createMounts. Don't forget: log to info file
 		// e.g. check if /spm/toolbox dir exists
-		// and check whether all offered Toolboxes have empty dirs in toolbox dir
-		boolean ret = false;
+		// and check whether all offered Toolboxes have empty dirs in toolbox
+		// dir
 
-		File uuidDir = new File(App.MOUNT_DIR, "/" + uuid.toString());
+		/*
+		 * Preparations
+		 */
+		boolean ret = false;
+		File uuidDir = new File(App.MOUNT_DIR, "/" + App.LAUNCHER_UUID.toString());
 		uuidDir.mkdirs();
 
+		/*
+		 * Start the FileWriters
+		 */
+		PrintWriter pwPids = null;
+		PrintWriter pwMounts = null;
+		try {
+			File pidLogFile = new File(uuidDir.getAbsolutePath() + App.PID_LOG_SUFFIX);
+			pidLogFile.createNewFile();
+			pwPids = new PrintWriter(new FileOutputStream(pidLogFile), true);
+
+			File mountLogFile = new File(uuidDir.getAbsolutePath() + App.MOUNT_LOG_SUFFIX);
+			mountLogFile.createNewFile();
+			pwMounts = new PrintWriter(new FileOutputStream(mountLogFile), true);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		/*
+		 * Create the mounts
+		 */
 		ret = mount(spmDir, uuidDir);
+		if (!ret) {
+
+			pwPids.close();
+			pwMounts.close();
+			return false;
+		}
+
+		for (File toolbox : toolboxes) {
+			File mountedToolboxDir = new File(uuidDir.getAbsolutePath(),
+					"/toolbox/" + toolbox.getParentFile().getName());
+
+			ret = ret && mount(toolbox, mountedToolboxDir);
+			if (!ret) {
+				pwPids.close();
+				pwMounts.close();
+				return false;
+			}
+		}
+
+		/*
+		 * Finishing this method
+		 */
+		if (pwPids != null) {
+			pwPids.flush();
+			pwPids.close();
+		}
+		if (pwMounts != null) {
+			pwMounts.flush();
+			pwMounts.close();
+		}
 
 		return ret;
 	}
