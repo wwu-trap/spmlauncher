@@ -142,6 +142,7 @@ public class Gui {
 		checkBox.setSelected(selected);
 		checkBox.addActionListener((x) -> comboBox.setEnabled(checkBox.isSelected()));
 		comboBox.setEnabled(checkBox.isSelected());
+		comboxBoxList.add(comboBox);
 		
 		checkBoxGroup.addComponent(checkBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
 		comboBoxGroup.addComponent(comboBox, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
