@@ -43,6 +43,11 @@ public class OSHandler {
 	/**
 	 * 
 	 */
+	public static boolean startSPM() {
+		boolean ret = false;
+
+		return ret;
+	}
 
 	/**
 	 * This method mounts the spm installation wth the chosen toolboxes to a
