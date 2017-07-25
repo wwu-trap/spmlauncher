@@ -174,6 +174,7 @@ public class OSHandler {
 		String[] cmd = new String[] { "sudo", App.MOUNT_SCRIPT, "-m", oldRelativePath, newRelativePath };
 
 		try {
+			System.out.println("Mounting " + oldDir.getAbsolutePath() + " to " + newDir.getAbsolutePath());
 			Process p = new ProcessBuilder(cmd).start();
 
 			// BufferedReader br = new BufferedReader(new
@@ -184,6 +185,9 @@ public class OSHandler {
 			// }
 			//
 			ret = p.waitFor() == 0;
+			if (!ret) {
+				System.err.println("Could not mount " + oldDir + " to " + newDir);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
