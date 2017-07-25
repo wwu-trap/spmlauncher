@@ -93,6 +93,7 @@ public class Gui {
 		ImageIcon icon = new ImageIcon(Gui.class.getResource("/spm12.png"));
 		frame.setIconImage(icon.getImage());
 		
+		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		
 //		clearAndSetupToolboxes();
 	}
@@ -123,6 +124,7 @@ public class Gui {
 		
 		frame.getContentPane().remove(scrollPane);
 		scrollPane = new JScrollPane(panel);
+		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		scrollPane.setBounds(12, 142, 412, 367);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
