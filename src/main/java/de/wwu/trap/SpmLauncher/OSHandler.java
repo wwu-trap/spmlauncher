@@ -57,16 +57,14 @@ public class OSHandler {
 	 */
 	public static boolean createMounts(UUID uuid, File spmDir, File[] toolboxes) {
 		// TODO complete createMounts. Don't forget: log to info file
+		// e.g. check if /spm/toolbox dir exists
+		// and check whether all offered Toolboxes have empty dirs in toolbox dir
 		boolean ret = false;
 
 		File uuidDir = new File(App.MOUNT_DIR, "/" + uuid.toString());
 		uuidDir.mkdirs();
 
-		
-		
-		
-		
-		mount(spmDir, uuidDir);
+		ret = mount(spmDir, uuidDir);
 
 		return ret;
 	}
@@ -141,12 +139,15 @@ public class OSHandler {
 		boolean ret = false;
 		String oldPath = oldDir.getAbsolutePath();
 		if (!oldPath.startsWith(App.MANAGED_SOFTWARE_DIR + "/")) {
+			System.err.println(
+					"Oldpath starts wrong. Excpected: " + App.MANAGED_SOFTWARE_DIR + "/" + ", recieved: " + oldPath);
 			return false;
 		}
 		String oldRelativePath = oldPath.replaceFirst(App.MANAGED_SOFTWARE_DIR + "/", "");
 
 		String newPath = newDir.getAbsolutePath();
 		if (!newPath.startsWith(App.MOUNT_DIR + "/")) {
+			System.err.println("Newpath starts wrong. Excpected: " + App.MOUNT_DIR + "/" + ", recieved: " + newPath);
 			return false;
 		}
 		String newRelativePath = newPath.replaceFirst(App.MOUNT_DIR + "/", "");
