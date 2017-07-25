@@ -69,17 +69,41 @@ public class OSHandler {
 		return ret;
 	}
 
+	@SuppressWarnings("restriction")
+	public static int getPid() {
+		int pid = -1;
+		try {
+			java.lang.management.RuntimeMXBean runtime = java.lang.management.ManagementFactory.getRuntimeMXBean();
+			java.lang.reflect.Field jvm = runtime.getClass().getDeclaredField("jvm");
+			jvm.setAccessible(true);
+			sun.management.VMManagement mgmt = (sun.management.VMManagement) jvm.get(runtime);
+			java.lang.reflect.Method pid_method = mgmt.getClass().getDeclaredMethod("getProcessId");
+			pid_method.setAccessible(true);
+
+			pid = (Integer) pid_method.invoke(mgmt);
+			System.out.println("This PID: " + pid);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pid;
+	}
+
 	/**
 	 * This method checks, whether the SPM-installation has the necessary
 	 * subdirs to create the mounts for the toolboxes
 	 * 
-	 * @param spmDir the dir of the SPM-installation
+	 * @param spmDir
+	 *            the dir of the SPM-installation
 	 * @return whether the subdirs exist
 	 */
 	public static boolean checkForNecessarySubdirsForToolboxes(File spmDir) {
 		boolean ret = false;
-		//TODO complete check for subtirs in toolbox dir
+		// TODO complete check for subtirs in toolbox dir
+		// alternativly disable toolboxes with no toolbox dir in spm
+		// installation
 
+		// TODO check whether an spm installation has an launch_command.txt
+		// inside the spm dir
 		return ret;
 	}
 
