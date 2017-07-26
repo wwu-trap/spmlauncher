@@ -1,8 +1,10 @@
 package de.wwu.trap.SpmLauncher;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,28 +37,79 @@ public class OSHandler {
 		return spms;
 	}
 
+	public static Process p;
+
 	/**
 	 * This method searches for the launch_command.txt within the spmDir and
 	 * starts the spm installation with it
 	 * 
 	 * @param tmpSpmDir
-	 *            the temporary mount SPM directory with a launch_command.txt in
-	 *            it
+	 *            the temporary mount SPM directory with a launch.sh in it
 	 */
 	public static void startSpmAndWait(File tmpSpmDir) {
 		System.out.println("Starting " + tmpSpmDir.getName());
+		String launchCommand = tmpSpmDir.getAbsolutePath() + "/launch.sh " + tmpSpmDir.getAbsolutePath();
 
-		/*
-		 * Read the spm start command
-		 */
-
-		/*
-		 * replace the vars
-		 */
+		System.out.println("Starting with: " + launchCommand);
 
 		/*
 		 * Start spm and wait
 		 */
+		try {
+			ProcessBuilder pb = new ProcessBuilder(launchCommand.split(" "));
+			for (String s : pb.command()) {
+				System.out.println(s);
+			}
+
+			p = pb.start();
+
+			// Process p = Runtime.getRuntime().exec(launchCommand);
+
+			// BufferedReader br = new BufferedReader(new
+			// InputStreamReader(p.getInputStream()));
+			Thread p1 = new Thread() {
+				@Override
+				public void run() {
+					BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+					String line = "";
+					try {
+						while ((line = br.readLine()) != null) {
+							System.out.println(line);
+							if (line.contains("Bye for now...")) {
+								System.out.println("Killing SPM because of \">> Bye for now...\"");
+								p.destroy();
+							}
+						}
+					} catch (IOException e) {
+					}
+				}
+			};
+			p1.start();
+			Thread p2 = new Thread() {
+				@Override
+				public void run() {
+					BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+					String line = "";
+					try {
+						while ((line = br.readLine()) != null) {
+							System.err.println(line);
+							if (line.contains(">> Bye for now...")) {
+								System.out.println("Killing SPM because of \">> Bye for now...\"");
+								p.destroy();
+							}
+						}
+					} catch (IOException e) {
+					}
+				}
+			};
+			p2.start();
+
+			p.waitFor();
+
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -205,9 +258,11 @@ public class OSHandler {
 
 		for (File dir : dirs) {
 			boolean deleteDir = dir.getAbsolutePath().equals(App.MOUNT_DIR + "/" + uuid);
-			umount(dir, deleteDir);
+			if (umount(dir, deleteDir)) {
+				dirs.remove(dir);
+			}
 		}
-		if (deleteLogs){
+		if (deleteLogs) {
 			File logMount = new File(App.MOUNT_DIR, uuid + App.MOUNT_LOG_SUFFIX);
 			logMount.delete();
 			File logPid = new File(App.MOUNT_DIR, uuid + App.PID_LOG_SUFFIX);
@@ -215,7 +270,7 @@ public class OSHandler {
 			File logFile = new File(App.MOUNT_DIR, App.LAUNCHER_UUID + ".log");
 			logFile.delete();
 		}
-		
+
 	}
 
 	/**
@@ -226,7 +281,7 @@ public class OSHandler {
 	 *            the dir which will be unmounted
 	 * @return whether the unmount was successfull
 	 */
-	public static boolean umount(File dir, boolean delete) {
+	private static boolean umount(File dir, boolean delete) {
 		boolean ret = false;
 		String path = dir.getAbsolutePath();
 		if (!path.startsWith(App.MOUNT_DIR + "/")) {
@@ -254,7 +309,7 @@ public class OSHandler {
 			return false;
 		}
 
-		if (delete) {
+		if (dir != null & delete) {
 			boolean empty = dir.listFiles().length == 0;
 			if (dir.exists() && dir.isDirectory() && empty) {
 				dir.delete();
