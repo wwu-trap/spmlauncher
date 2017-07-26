@@ -35,10 +35,19 @@ public class OSHandler {
 		return spms;
 	}
 
-	public static boolean startSPM() {
-		boolean ret = false;
-
-		return ret;
+	/**
+	 * 
+	 * @param tmpSpmDir
+	 *            the temporary mount SPM directory with a
+	 */
+	public static void startSpmAndWait(File tmpSpmDir) {
+		System.out.println("Starting " + tmpSpmDir.getName());
+		
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -52,8 +61,9 @@ public class OSHandler {
 	 *            the path to the chosen spm installation
 	 * @param toolboxes
 	 *            the paths to the chosen versions of the toolboxes
+	 * @return a LinkedList with the dirs which has been mounted successfully            
 	 */
-	public static boolean createMounts(File spmDir, Collection<File> toolboxes) {
+	public static LinkedList<File> createMounts(File spmDir, Collection<File> toolboxes) {
 		// TODO complete createMounts. Don't forget: log to info file
 		// e.g. check if /spm/toolbox dir exists
 		// and check whether all offered Toolboxes have empty dirs in toolbox
@@ -62,6 +72,7 @@ public class OSHandler {
 		/*
 		 * Preparations
 		 */
+		LinkedList<File> mountedDirs = new LinkedList<>();
 		boolean ret = false;
 		File uuidDir = new File(App.MOUNT_DIR, "/" + App.LAUNCHER_UUID.toString());
 		uuidDir.mkdirs();
@@ -81,22 +92,23 @@ public class OSHandler {
 			pwMounts = new PrintWriter(new FileOutputStream(mountLogFile), true);
 		} catch (IOException e) {
 			e.printStackTrace();
-			return false;
+			return mountedDirs;
 		}
-		
-		pwPids.println("SPMLauncher,"+getPid());
-		
+
+		pwPids.println("SPMLauncher," + getPid());
+
 		/*
 		 * Create the mounts
 		 */
 		ret = mount(spmDir, uuidDir);
 		if (ret) {
+			mountedDirs.add(uuidDir);
 			pwMounts.println(uuidDir);
 			pwMounts.flush();
-		}else{
+		} else {
 			pwPids.close();
 			pwMounts.close();
-			return false;
+			return mountedDirs;
 		}
 
 		for (File toolbox : toolboxes) {
@@ -105,12 +117,13 @@ public class OSHandler {
 
 			ret = ret && mount(toolbox, mountedToolboxDir);
 			if (ret) {
+				mountedDirs.add(mountedToolboxDir);
 				pwMounts.println(mountedToolboxDir);
 				pwMounts.flush();
-			}else{
+			} else {
 				pwPids.close();
 				pwMounts.close();
-				return false;
+				return mountedDirs;
 			}
 		}
 
@@ -126,7 +139,7 @@ public class OSHandler {
 			pwMounts.close();
 		}
 
-		return ret;
+		return mountedDirs;
 	}
 
 	@SuppressWarnings("restriction")
@@ -141,7 +154,6 @@ public class OSHandler {
 			pid_method.setAccessible(true);
 
 			pid = (Integer) pid_method.invoke(mgmt);
-			System.out.println("This PID: " + pid);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -199,10 +211,11 @@ public class OSHandler {
 	 *            the dir which will be unmounted
 	 * @return whether the unmount was successfull
 	 */
-	public static boolean umount(File dir) {
+	public static boolean umount(File dir, boolean delete) {
 		boolean ret = false;
 		String path = dir.getAbsolutePath();
 		if (!path.startsWith(App.MOUNT_DIR + "/")) {
+			System.out.println(dir.getAbsolutePath() + " does not start with " + App.MOUNT_DIR + "/");
 			return false;
 		}
 		String relativePath = path.replaceFirst(App.MOUNT_DIR + "/", "");
@@ -210,6 +223,7 @@ public class OSHandler {
 		String[] cmd = new String[] { "sudo", App.MOUNT_SCRIPT, "-u", relativePath };
 
 		try {
+			System.out.println("Unmounting with delete="+delete + " " + dir);
 			Process p = new ProcessBuilder(cmd).start();
 
 			// BufferedReader br = new BufferedReader(new
@@ -225,9 +239,12 @@ public class OSHandler {
 			return false;
 		}
 
-		boolean empty = dir.listFiles().length == 0;
-		if (dir.exists() && dir.isDirectory() && empty) {
-			dir.delete();
+		if(delete){
+			boolean empty = dir.listFiles().length == 0;
+			if (dir.exists() && dir.isDirectory() && empty) {
+				dir.delete();
+			}
+			
 		}
 		return ret;
 	}
@@ -243,7 +260,7 @@ public class OSHandler {
 	 *            target of the mount
 	 * @return Whether the mount was successfull
 	 */
-	public static boolean mount(File oldDir, File newDir) {
+	private static boolean mount(File oldDir, File newDir) {
 		boolean ret = false;
 		String oldPath = oldDir.getAbsolutePath();
 		if (!oldPath.startsWith(App.MANAGED_SOFTWARE_DIR + "/")) {

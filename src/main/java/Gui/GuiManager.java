@@ -60,14 +60,30 @@ public class GuiManager {
 			}
 		}
 
-
-		boolean mountResult = OSHandler.createMounts(spmDir, activatedToolboxes);
-		if (!mountResult) {
+		LinkedList<File> mountResult = OSHandler.createMounts(spmDir, activatedToolboxes);
+		if (activatedToolboxes.size() + 1 != mountResult.size()) {
 			JOptionPane.showMessageDialog(this.gui.frame, "Could not mount the directories!", "Error",
 					JOptionPane.ERROR_MESSAGE);
+			OSHandler.umountAllDirs(mountResult, App.LAUNCHER_UUID.toString());
 			return;
 		}
-
+		
+		this.gui.frame.setVisible(false);
+		this.gui.frame.dispose();
+		this.gui.frame = null;
+		this.gui = null;
+		Thread p1 = new Thread(){
+			@Override
+			public void run() {
+				
+				File tmpSpmDir = new File(App.MOUNT_DIR + "/" + App.LAUNCHER_UUID.toString());
+				OSHandler.startSpmAndWait(tmpSpmDir);
+				OSHandler.umountAllDirs(mountResult, App.LAUNCHER_UUID.toString());				
+				
+			}
+		};
+		p1.start();
+		
 	}
 
 	public void chooseSpmVersion(File spmDir) {
