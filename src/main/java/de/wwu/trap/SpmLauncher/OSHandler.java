@@ -79,13 +79,17 @@ public class OSHandler {
 			e.printStackTrace();
 			return false;
 		}
-
+		
+		pwPids.println("SPMLauncher,"+getPid());
+		
 		/*
 		 * Create the mounts
 		 */
 		ret = mount(spmDir, uuidDir);
-		if (!ret) {
-
+		if (ret) {
+			pwMounts.println(uuidDir);
+			pwMounts.flush();
+		}else{
 			pwPids.close();
 			pwMounts.close();
 			return false;
@@ -96,7 +100,10 @@ public class OSHandler {
 					"/toolbox/" + toolbox.getParentFile().getName());
 
 			ret = ret && mount(toolbox, mountedToolboxDir);
-			if (!ret) {
+			if (ret) {
+				pwMounts.println(mountedToolboxDir);
+				pwMounts.flush();
+			}else{
 				pwPids.close();
 				pwMounts.close();
 				return false;
