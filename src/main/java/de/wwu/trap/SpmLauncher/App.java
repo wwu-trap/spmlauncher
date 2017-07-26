@@ -76,7 +76,8 @@ public class App {
 			}
 		}
 
-		OSHandler.getPid();
+
+		System.out.println("This PID: " + OSHandler.getPid());
 		long t1 = System.currentTimeMillis();
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

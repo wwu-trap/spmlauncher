@@ -6,8 +6,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 import Utils.FileComparator;
 import Utils.FileManipulator;
+import Utils.MountedDirComparator;
 
 /**
  * This class holds static methods to do stuff related to the OS like
@@ -161,6 +165,30 @@ public class OSHandler {
 		// TODO check whether an spm installation has an launch_command.txt
 		// inside the spm dir
 		return ret;
+	}
+
+	/**
+	 * This method unmounts a list of directories. The list doesn't need to be
+	 * sorted. If subdirs of dirs has to be unmounted before the parent, and the
+	 * parent is in this list, the subdir will be unmounted before the parentdir.
+	 * 
+	 * @param dirs
+	 *            the directories which shall be unmounted
+	 */
+	public static void umountAllDirs(List<File> dirs, String uuid) {
+		if(dirs == null){
+			return;
+		}
+		dirs.sort(new MountedDirComparator());
+		
+		for (File dir : dirs) {
+			boolean deleteDir = dir.getAbsolutePath().equals(App.MOUNT_DIR + "/" + uuid);
+			umount(dir, deleteDir);
+		}
+		File logMount = new File(App.MOUNT_DIR, uuid + App.MOUNT_LOG_SUFFIX);
+		logMount.delete();
+		File logPid = new File(App.MOUNT_DIR, uuid + App.PID_LOG_SUFFIX);
+		logPid.delete();
 	}
 
 	/**
