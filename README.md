@@ -17,15 +17,15 @@ Example:
 ManagedSoftware
 ├── spm
 │   ├── spm12
-│   │   ├── launch_command.txt
+│   │   ├── launch.sh (chmod 777)
 │   │   └── toolbox
 │   │       └── TFCE
 │   │           └── v110
 │   ├── spm5
-│   │   ├── launch_command.txt
+│   │   ├── launch.sh (chmod 777)
 │   │   └── toolbox
 │   └── spm8
-│   │   ├── launch_command.txt
+│   │   ├── launch.sh (chmod 777)
 │   │   └── toolbox
 └── toolbox
     ├── spm12
@@ -48,5 +48,5 @@ ManagedSoftware
             ├── v2.3
             └── v2.5
 Every toolbox needs a subdirectory in the toolbox-directory of the spm installation with the excact same name!
-Every spm installation needs a launch_command.txt with command to start the spm installation. It support the $SPM_DIR variable which resolves to the temp spm installation path.
+Every spm installation needs a launch.sh with command to start the spm installation. The launch.sh will be called with the tmpSpmDir as argument. The launch file should be executable. That means chmod 777 and #!/bin/bash in first line. 
  
