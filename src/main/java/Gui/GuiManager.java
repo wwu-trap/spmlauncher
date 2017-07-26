@@ -64,7 +64,8 @@ public class GuiManager {
 		if (activatedToolboxes.size() + 1 != mountResult.size()) {
 			JOptionPane.showMessageDialog(this.gui.frame, "Could not mount the directories!", "Error",
 					JOptionPane.ERROR_MESSAGE);
-			OSHandler.umountAllDirs(mountResult, App.LAUNCHER_UUID.toString());
+			OSHandler.umountAllDirs(mountResult, App.LAUNCHER_UUID.toString(), false);
+			System.exit(1);
 			return;
 		}
 		
@@ -78,7 +79,8 @@ public class GuiManager {
 				
 				File tmpSpmDir = new File(App.MOUNT_DIR + "/" + App.LAUNCHER_UUID.toString());
 				OSHandler.startSpmAndWait(tmpSpmDir);
-				OSHandler.umountAllDirs(mountResult, App.LAUNCHER_UUID.toString());				
+				OSHandler.umountAllDirs(mountResult, App.LAUNCHER_UUID.toString(), true);
+				System.exit(0);
 				
 			}
 		};

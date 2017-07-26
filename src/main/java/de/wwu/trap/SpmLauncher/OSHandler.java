@@ -36,18 +36,27 @@ public class OSHandler {
 	}
 
 	/**
+	 * This method searches for the launch_command.txt within the spmDir and
+	 * starts the spm installation with it
 	 * 
 	 * @param tmpSpmDir
-	 *            the temporary mount SPM directory with a
+	 *            the temporary mount SPM directory with a launch_command.txt in
+	 *            it
 	 */
 	public static void startSpmAndWait(File tmpSpmDir) {
 		System.out.println("Starting " + tmpSpmDir.getName());
-		
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+
+		/*
+		 * Read the spm start command
+		 */
+
+		/*
+		 * replace the vars
+		 */
+
+		/*
+		 * Start spm and wait
+		 */
 	}
 
 	/**
@@ -61,7 +70,7 @@ public class OSHandler {
 	 *            the path to the chosen spm installation
 	 * @param toolboxes
 	 *            the paths to the chosen versions of the toolboxes
-	 * @return a LinkedList with the dirs which has been mounted successfully            
+	 * @return a LinkedList with the dirs which has been mounted successfully
 	 */
 	public static LinkedList<File> createMounts(File spmDir, Collection<File> toolboxes) {
 		// TODO complete createMounts. Don't forget: log to info file
@@ -182,25 +191,31 @@ public class OSHandler {
 	/**
 	 * This method unmounts a list of directories. The list doesn't need to be
 	 * sorted. If subdirs of dirs has to be unmounted before the parent, and the
-	 * parent is in this list, the subdir will be unmounted before the parentdir.
+	 * parent is in this list, the subdir will be unmounted before the
+	 * parentdir.
 	 * 
 	 * @param dirs
 	 *            the directories which shall be unmounted
 	 */
-	public static void umountAllDirs(List<File> dirs, String uuid) {
-		if(dirs == null){
+	public static void umountAllDirs(List<File> dirs, String uuid, boolean deleteLogs) {
+		if (dirs == null) {
 			return;
 		}
 		dirs.sort(new MountedDirComparator());
-		
+
 		for (File dir : dirs) {
 			boolean deleteDir = dir.getAbsolutePath().equals(App.MOUNT_DIR + "/" + uuid);
 			umount(dir, deleteDir);
 		}
-		File logMount = new File(App.MOUNT_DIR, uuid + App.MOUNT_LOG_SUFFIX);
-		logMount.delete();
-		File logPid = new File(App.MOUNT_DIR, uuid + App.PID_LOG_SUFFIX);
-		logPid.delete();
+		if (deleteLogs){
+			File logMount = new File(App.MOUNT_DIR, uuid + App.MOUNT_LOG_SUFFIX);
+			logMount.delete();
+			File logPid = new File(App.MOUNT_DIR, uuid + App.PID_LOG_SUFFIX);
+			logPid.delete();
+			File logFile = new File(App.MOUNT_DIR, App.LAUNCHER_UUID + ".log");
+			logFile.delete();
+		}
+		
 	}
 
 	/**
@@ -223,7 +238,7 @@ public class OSHandler {
 		String[] cmd = new String[] { "sudo", App.MOUNT_SCRIPT, "-u", relativePath };
 
 		try {
-			System.out.println("Unmounting with delete="+delete + " " + dir);
+			System.out.println("Unmounting with delete=" + delete + " " + dir);
 			Process p = new ProcessBuilder(cmd).start();
 
 			// BufferedReader br = new BufferedReader(new
@@ -239,12 +254,12 @@ public class OSHandler {
 			return false;
 		}
 
-		if(delete){
+		if (delete) {
 			boolean empty = dir.listFiles().length == 0;
 			if (dir.exists() && dir.isDirectory() && empty) {
 				dir.delete();
 			}
-			
+
 		}
 		return ret;
 	}
