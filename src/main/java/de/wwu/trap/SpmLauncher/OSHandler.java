@@ -11,9 +11,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import Utils.FileComparator;
-import Utils.FileManipulator;
-import Utils.MountedDirComparator;
+import de.wwu.trap.Utils.FileComparator;
+import de.wwu.trap.Utils.FileManipulator;
+import de.wwu.trap.Utils.MountedDirComparator;
 
 /**
  * This class holds static methods to do stuff related to the OS like

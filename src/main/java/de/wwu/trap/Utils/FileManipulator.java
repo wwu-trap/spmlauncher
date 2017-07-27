@@ -1,4 +1,4 @@
-package Utils;
+package de.wwu.trap.Utils;
 
 import java.io.File;
 

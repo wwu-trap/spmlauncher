@@ -1,4 +1,4 @@
-package Gui;
+package de.wwu.trap.Gui;
 
 import java.awt.EventQueue;
 import java.io.BufferedReader;
@@ -14,10 +14,10 @@ import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 
-import Utils.FileComparator;
-import Utils.FileManipulator;
 import de.wwu.trap.SpmLauncher.App;
 import de.wwu.trap.SpmLauncher.OSHandler;
+import de.wwu.trap.Utils.FileComparator;
+import de.wwu.trap.Utils.FileManipulator;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.web.WebView;

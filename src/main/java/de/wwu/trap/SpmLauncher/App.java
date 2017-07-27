@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import javax.swing.UIManager;
 
-import Gui.GuiManager;
+import de.wwu.trap.Gui.GuiManager;
 
 /**
  * 

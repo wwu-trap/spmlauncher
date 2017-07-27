@@ -1,4 +1,4 @@
-package Gui;
+package de.wwu.trap.Gui;
 
 import java.awt.Font;
 import java.io.File;
