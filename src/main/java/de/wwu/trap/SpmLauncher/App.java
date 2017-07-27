@@ -62,9 +62,7 @@ public class App {
 	 *            the arguments from the commandline
 	 */
 	public static void main(String[] args) {
-		if (args.length > 0 && (args[0].equalsIgnoreCase("--console") || args[0].equalsIgnoreCase("-c"))) {
-			// do nothing
-		} else {
+		if (args.length > 0 && (args[0].equalsIgnoreCase("--no-console") || args[0].equalsIgnoreCase("-nc"))) {
 			try {
 				// Write Sysout to logFile if it isn't started with argument
 				// --console or -c
@@ -74,6 +72,8 @@ public class App {
 			} catch (FileNotFoundException e1) {
 
 			}
+		} else {
+			// do nothing
 		}
 
 
