@@ -102,22 +102,30 @@ public class GuiManager {
 	}
 
 	public void chooseSpmVersion(File spmDir) {
+		gui.clearAndSetupToolboxes();
 		File spmToolboxDir = new File(App.MANAGED_SOFTWARE_DIR, "toolbox" + File.separatorChar + spmDir.getName());
 		File[] toolboxes = spmToolboxDir.listFiles((dir) -> dir.isDirectory());
-		Arrays.sort(toolboxes, new FileComparator<File>());
-		if (toolboxes == null) {
-			return;
+		
+		if (toolboxes != null) {
+			Arrays.sort(toolboxes, new FileComparator<File>());
+			
+			for (File toolbox : toolboxes) {
+				File[] toolboxVersions = toolbox.listFiles((dir) -> dir.isDirectory());
+				FileManipulator.onlyNameInToString(toolboxVersions);
+				Arrays.sort(toolboxVersions, new FileComparator<>(true));
+				
+				File toolboxIsStandard = new File(toolbox, "standard");
+				
+				boolean isStandard = false;
+				if(toolboxIsStandard != null){
+					isStandard = toolboxIsStandard.exists();
+				}
+				
+				
+				gui.addToolbox(toolboxVersions, isStandard);
+			}
 		}
-
-		gui.clearAndSetupToolboxes();
-
-		for (File toolbox : toolboxes) {
-			File[] toolboxVersions = toolbox.listFiles((dir) -> dir.isDirectory());
-			FileManipulator.onlyNameInToString(toolboxVersions);
-			Arrays.sort(toolboxVersions, new FileComparator<>(true));
-
-			gui.addToolbox(toolboxVersions, false);
-		}
+		
 
 		this.gui.frame.validate();
 		this.gui.frame.repaint();

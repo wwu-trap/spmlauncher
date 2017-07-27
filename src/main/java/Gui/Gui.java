@@ -44,6 +44,7 @@ public class Gui {
 
 	/**
 	 * Initialize the contents of the frame.
+	 * @wbp.parser.entryPoint
 	 */
 	public void initialize(File[] spmVersions) {
 
