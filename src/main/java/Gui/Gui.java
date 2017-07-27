@@ -18,6 +18,7 @@ import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
+import javafx.embed.swing.JFXPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.Box;
@@ -34,6 +35,7 @@ public class Gui {
 	JFrame frame;
 	JComboBox<File> spmVersionComboBox;
 	JButton bttnStartSpm;
+	JFXPanel changelogPanel;
 
 	/**
 	 * Create the application.
@@ -47,11 +49,11 @@ public class Gui {
 	 * @wbp.parser.entryPoint
 	 */
 	public void initialize(File[] spmVersions) {
-
 		frame = new JFrame("SPM Launcher");
-		frame.setBounds(100, 100, 450, 600);
+		frame.setBounds(100, 100, 900, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		
+		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.getContentPane().setLayout(null);
 
@@ -62,7 +64,7 @@ public class Gui {
 		frame.getContentPane().add(lblSpmLauncher);
 
 		JLabel lblSpmVersion = new JLabel("SPM Version");
-		lblSpmVersion.setBounds(12, 71, 125, 20);
+		lblSpmVersion.setBounds(12, 70, 125, 20);
 		frame.getContentPane().add(lblSpmVersion);
 
 		spmVersionComboBox = new JComboBox<>();
@@ -91,6 +93,10 @@ public class Gui {
 		Component verticalStrut = Box.createVerticalStrut(20);
 		verticalBox.add(verticalStrut);
 
+		changelogPanel = new JFXPanel(); // Scrollable JCompenent
+		changelogPanel.setBounds(448, 20, 440, 530);
+		frame.getContentPane().add(changelogPanel);
+
 		ImageIcon icon = new ImageIcon(Gui.class.getResource("/spm12.png"));
 		frame.setIconImage(icon.getImage());
 		
@@ -98,6 +104,8 @@ public class Gui {
 		
 //		clearAndSetupToolboxes();
 	}
+	
+	
 
 	private GroupLayout groupLayout;
 	LinkedList<JComboBox<File>> comboxBoxList = new LinkedList<>();
@@ -155,5 +163,4 @@ public class Gui {
 				.addPreferredGap(ComponentPlacement.UNRELATED);
 
 	}
-
 }

@@ -204,7 +204,6 @@ public class OSHandler {
 		return mountedDirs;
 	}
 
-	@SuppressWarnings("restriction")
 	public static int getPid() {
 		int pid = -1;
 		try {
