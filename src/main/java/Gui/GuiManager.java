@@ -130,7 +130,7 @@ public class GuiManager {
 			public void run() {
 				
 				try {
-					OSHandler.umountAllDirs(mountResult, App.LAUNCHER_UUID.toString(), true);
+					OSHandler.umountAllDirs(mountResult, App.LAUNCHER_UUID.toString());
 					OSHandler.p.destroy();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -144,7 +144,7 @@ public class GuiManager {
 		if (activatedToolboxes.size() + 1 != mountResult.size()) {
 			JOptionPane.showMessageDialog(this.gui.frame, "Could not mount the directories!", "Error",
 					JOptionPane.ERROR_MESSAGE);
-			OSHandler.umountAllDirs(mountResult, App.LAUNCHER_UUID.toString(), false);
+			OSHandler.umountAllDirs(mountResult, App.LAUNCHER_UUID.toString());
 			System.exit(1);
 			return;
 		}
