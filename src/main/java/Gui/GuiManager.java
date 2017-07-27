@@ -165,6 +165,8 @@ public class GuiManager {
 	}
 
 	public void chooseSpmVersion(File spmDir) {
+		if (spmDir == null)
+			return;
 		gui.clearAndSetupToolboxes();
 		File spmToolboxDir = new File(App.MANAGED_SOFTWARE_DIR, "toolbox" + File.separatorChar + spmDir.getName());
 		File[] toolboxes = spmToolboxDir.listFiles((dir) -> dir.isDirectory());

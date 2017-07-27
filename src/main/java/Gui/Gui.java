@@ -68,7 +68,8 @@ public class Gui {
 		frame.getContentPane().add(lblSpmVersion);
 
 		spmVersionComboBox = new JComboBox<>();
-		spmVersionComboBox.setModel(new DefaultComboBoxModel<File>(spmVersions));
+		if(spmVersions != null)
+			spmVersionComboBox.setModel(new DefaultComboBoxModel<File>(spmVersions));
 		spmVersionComboBox.setBounds(182, 71, 242, 24);
 		frame.getContentPane().add(spmVersionComboBox);
 

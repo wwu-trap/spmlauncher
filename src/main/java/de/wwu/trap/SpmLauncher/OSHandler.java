@@ -32,8 +32,11 @@ public class OSHandler {
 	public static File[] getSpmVersions() {
 		File spmDir = new File(App.MANAGED_SOFTWARE_DIR, "spm");
 		File[] spms = spmDir.listFiles((e) -> e.isDirectory());
-		FileManipulator.onlyNameInToString(spms);
-		Arrays.sort(spms, new FileComparator<File>());
+		if (spms != null) {
+			FileManipulator.onlyNameInToString(spms);
+			Arrays.sort(spms, new FileComparator<File>());
+		}
+		
 		return spms;
 	}
 
