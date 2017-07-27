@@ -60,9 +60,6 @@ public class OSHandler {
 		 */
 		try {
 			ProcessBuilder pb = new ProcessBuilder(launchCommand.split(" "));
-			for (String s : pb.command()) {
-				System.out.println(s);
-			}
 
 			p = pb.start();
 
@@ -107,10 +104,11 @@ public class OSHandler {
 			};
 			p2.start();
 
-			p.waitFor();
+			return p.waitFor();
 
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
+			return 1;
 		}
 
 	}

@@ -71,8 +71,7 @@ public class GuiManager {
 					System.out.println("No or empty changelog! (" + changelogFile.getAbsolutePath() + ")");
 					return;
 				}
-				
-				
+
 				/*
 				 * Loading Changelog file
 				 */
@@ -99,15 +98,14 @@ public class GuiManager {
 				/*
 				 * Packing the html in the JavaFx Webview
 				 */
-				
-				Platform.runLater(() -> { 
+
+				Platform.runLater(() -> {
 					WebView webView = new WebView();
 					webView.getEngine().setUserStyleSheetLocation(getClass().getResource("/changelog.css").toString());
-					webView.getEngine().loadContent(changelog);					
+					webView.getEngine().loadContent(changelog);
 					GuiManager.this.gui.changelogPanel.setScene(new Scene(webView));
 				});
-				
-				
+
 			}
 		};
 		p1.start();
