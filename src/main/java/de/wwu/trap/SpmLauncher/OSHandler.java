@@ -250,7 +250,7 @@ public class OSHandler {
 	 * @param dirs
 	 *            the directories which shall be unmounted
 	 */
-	public static void umountAllDirs(List<File> dirs, String uuid, boolean deleteLogs) {
+	public static synchronized void umountAllDirs(List<File> dirs, String uuid, boolean deleteLogs) {
 		if (dirs == null) {
 			return;
 		}
