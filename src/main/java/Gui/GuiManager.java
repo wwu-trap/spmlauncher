@@ -121,18 +121,25 @@ public class GuiManager {
 				activatedToolboxes.add((File) comboBox.getSelectedItem());
 			}
 		}
-
+		
 		LinkedList<File> mountResult = OSHandler.createMounts(spmDir, activatedToolboxes);
-
-		Runtime.getRuntime().addShutdownHook(new Thread() {
+		
+		Thread shutdownHook = new Thread() {
+			
 			@Override
 			public void run() {
-				// System.out.println("Killing SPM and unmounting all dirs
-				// because of sigkill");
-				OSHandler.p.destroy();
-				OSHandler.umountAllDirs(mountResult, App.LAUNCHER_UUID.toString(), true);
+				
+				try {
+					OSHandler.umountAllDirs(mountResult, App.LAUNCHER_UUID.toString(), true);
+					OSHandler.p.destroy();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					System.out.println("Shutdownhook completed");
+				}
 			}
-		});
+		};
+		Runtime.getRuntime().addShutdownHook(shutdownHook);
 
 		if (activatedToolboxes.size() + 1 != mountResult.size()) {
 			JOptionPane.showMessageDialog(this.gui.frame, "Could not mount the directories!", "Error",
@@ -149,13 +156,8 @@ public class GuiManager {
 		Thread p1 = new Thread() {
 			@Override
 			public void run() {
-
 				File tmpSpmDir = new File(App.MOUNT_DIR + "/" + App.LAUNCHER_UUID.toString());
 				OSHandler.startSpmAndWait(tmpSpmDir);
-
-				OSHandler.umountAllDirs(mountResult, App.LAUNCHER_UUID.toString(), true);
-				System.exit(0);
-
 			}
 		};
 		p1.start();

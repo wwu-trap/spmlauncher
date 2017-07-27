@@ -36,7 +36,7 @@ public class OSHandler {
 			FileManipulator.onlyNameInToString(spms);
 			Arrays.sort(spms, new FileComparator<File>());
 		}
-		
+
 		return spms;
 	}
 
@@ -48,6 +48,7 @@ public class OSHandler {
 	 * 
 	 * @param tmpSpmDir
 	 *            the temporary mount SPM directory with a launch.sh in it
+	 * @return
 	 */
 	public static void startSpmAndWait(File tmpSpmDir) {
 		System.out.println("Starting " + tmpSpmDir.getName());
@@ -104,11 +105,10 @@ public class OSHandler {
 			};
 			p2.start();
 
-			return p.waitFor();
+			p.waitFor();
 
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
-			return 1;
 		}
 
 	}
@@ -250,7 +250,7 @@ public class OSHandler {
 	 * @param dirs
 	 *            the directories which shall be unmounted
 	 */
-	public static synchronized void umountAllDirs(List<File> dirs, String uuid, boolean deleteLogs) {
+	public static void umountAllDirs(List<File> dirs, String uuid) {
 		if (dirs == null) {
 			return;
 		}
@@ -258,18 +258,15 @@ public class OSHandler {
 
 		for (File dir : dirs) {
 			boolean deleteDir = dir.getAbsolutePath().equals(App.MOUNT_DIR + "/" + uuid);
-			if (umount(dir, deleteDir)) {
-				dirs.remove(dir);
-			}
+			umount(dir, deleteDir);
 		}
-		if (deleteLogs) {
-			File logMount = new File(App.MOUNT_DIR, uuid + App.MOUNT_LOG_SUFFIX);
-			logMount.delete();
-			File logPid = new File(App.MOUNT_DIR, uuid + App.PID_LOG_SUFFIX);
-			logPid.delete();
-			File logFile = new File(App.MOUNT_DIR, App.LAUNCHER_UUID + ".log");
-			logFile.delete();
-		}
+
+		File logMount = new File(App.MOUNT_DIR, uuid + App.MOUNT_LOG_SUFFIX);
+		logMount.delete();
+		File logPid = new File(App.MOUNT_DIR, uuid + App.PID_LOG_SUFFIX);
+		logPid.delete();
+		File logFile = new File(App.MOUNT_DIR, App.LAUNCHER_UUID + ".log");
+		logFile.delete();
 
 	}
 
