@@ -127,10 +127,6 @@ public class OSHandler {
 	 * @return a LinkedList with the dirs which has been mounted successfully
 	 */
 	public static LinkedList<File> createMounts(File spmDir, Collection<File> toolboxes) {
-		// TODO complete createMounts. Don't forget: log to info file
-		// e.g. check if /spm/toolbox dir exists
-		// and check whether all offered Toolboxes have empty dirs in toolbox
-		// dir
 
 		/*
 		 * Preparations
@@ -236,7 +232,7 @@ public class OSHandler {
 		// alternativly disable toolboxes with no toolbox dir in spm
 		// installation
 
-		// TODO check whether an spm installation has an launch_command.txt
+		// TODO check whether an spm installation has an launch.sh
 		// inside the spm dir
 		return ret;
 	}
