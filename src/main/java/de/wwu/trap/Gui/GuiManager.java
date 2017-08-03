@@ -101,6 +101,7 @@ public class GuiManager {
 
 				Platform.runLater(() -> {
 					WebView webView = new WebView();
+					//TODO get css dynamically if /.../SPMLauncher/ManagedSoftware/changelog.css exists
 					webView.getEngine().setUserStyleSheetLocation(getClass().getResource("/changelog.css").toString());
 					webView.getEngine().loadContent(changelog);
 					GuiManager.this.gui.changelogPanel.setScene(new Scene(webView));
