@@ -27,7 +27,7 @@ public class OSHandler {
 	 * Returns all the spm installations. toString method of files overwritten
 	 * to only return name of file and not absolute path
 	 * 
-	 * @return Paths to the spm installtions
+	 * @return Paths to the spm installations
 	 */
 	public static File[] getSpmVersions() {
 		File spmDir = new File(App.MANAGED_SOFTWARE_DIR, "spm");
