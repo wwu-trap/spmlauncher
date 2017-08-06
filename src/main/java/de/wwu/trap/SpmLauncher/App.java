@@ -8,6 +8,7 @@ import java.util.UUID;
 import javax.swing.UIManager;
 
 import de.wwu.trap.Gui.GuiManager;
+import de.wwu.trap.Gui.FxGuiController;
 
 /**
  * 
@@ -62,31 +63,40 @@ public class App {
 	 *            the arguments from the commandline
 	 */
 	public static void main(String[] args) {
-		if (args.length > 0 && (args[0].equalsIgnoreCase("--no-console") || args[0].equalsIgnoreCase("-nc"))) {
-			try {
-				// Write Sysout to logFile if it isn't started with argument
-				// --console or -c
-				File logFile = new File(MOUNT_DIR, LAUNCHER_UUID + ".log");
-				System.setOut(new PrintStream(logFile));
-				System.setErr(new PrintStream(logFile));
-			} catch (FileNotFoundException e1) {
+		boolean enableFx = false;
 
+		for (String arg : args) {
+			if (arg.equalsIgnoreCase("--no-console") || arg.equalsIgnoreCase("-nc")) {
+				try {
+					// Write Sysout to logFile if it isn't started with argument
+					// --console or -c
+					File logFile = new File(MOUNT_DIR, LAUNCHER_UUID + ".log");
+					System.setOut(new PrintStream(logFile));
+					System.setErr(new PrintStream(logFile));
+				} catch (FileNotFoundException e1) {
+
+				}
 			}
-		} else {
-			// do nothing
-		}
 
+			if (arg.equalsIgnoreCase("--enable-fx")) {
+				enableFx = true;
+			}
+
+		}
 
 		System.out.println("This PID: " + OSHandler.getPid());
-		long t1 = System.currentTimeMillis();
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
 
+		if (!enableFx) {
+			try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} catch (Exception e) {
+
+			}
+			new GuiManager().startGui();
+		} else {
+			FxGuiController.launch(FxGuiController.class, args);
 		}
 
-		new GuiManager().startGui();
-		System.out.println("Lauch time: " + (System.currentTimeMillis() - t1));
 
 	}
 }
