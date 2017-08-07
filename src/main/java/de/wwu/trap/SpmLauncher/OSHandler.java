@@ -393,7 +393,9 @@ public class OSHandler {
 		try {
 			Reader reader = new InputStreamReader(
 					new FileInputStream(new File(App.MANAGED_SOFTWARE_DIR, "tooltips.csv")));
-			cp = new CSVParser(reader, CSVFormat.DEFAULT);
+			CSVFormat format = CSVFormat.DEFAULT;
+			format.withCommentMarker('#');
+			cp = new CSVParser(reader, format);
 		} catch (IOException e) {
 			return null;
 		}
