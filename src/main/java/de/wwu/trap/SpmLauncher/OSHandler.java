@@ -2,14 +2,22 @@ package de.wwu.trap.SpmLauncher;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
 import de.wwu.trap.Utils.FileComparator;
 import de.wwu.trap.Utils.FileManipulator;
@@ -368,6 +376,47 @@ public class OSHandler {
 		}
 
 		return ret;
+	}
+
+	/**
+	 * This method loads the tooltips.csv from the
+	 * {@link de.wwu.trap.SpmLauncher.App#MANAGED_SOFTWARE_DIR} and puts them in
+	 * a HashMap
+	 * 
+	 * @return the described HashMap<File, String> where the file ist the
+	 *         directory of the spm installation, the toolbox, or the toolbox version.
+	 */
+	public static HashMap<File, String> getTooltips() {
+		HashMap<File, String> tooltipsMap = new HashMap<>();
+
+		CSVParser cp;
+		try {
+			Reader reader = new InputStreamReader(
+					new FileInputStream(new File(App.MANAGED_SOFTWARE_DIR, "tooltips.csv")));
+			cp = new CSVParser(reader, CSVFormat.DEFAULT);
+		} catch (IOException e) {
+			return null;
+		}
+
+		Iterator<CSVRecord> csvIterator = cp.iterator();
+
+		while (csvIterator.hasNext()) {
+			CSVRecord record = csvIterator.next();
+			try {
+				File dir = new File(App.MANAGED_SOFTWARE_DIR, record.get(0));
+				tooltipsMap.put(dir, record.get(1));
+			} catch (Exception e) {
+			}
+		}
+
+		if (cp != null) {
+			try {
+				cp.close();
+			} catch (IOException e) {
+			}
+		}
+
+		return tooltipsMap;
 	}
 
 }
