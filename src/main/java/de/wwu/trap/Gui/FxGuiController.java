@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ResourceBundle;
 
@@ -19,6 +20,7 @@ import de.wwu.trap.SpmLauncher.App;
 import de.wwu.trap.SpmLauncher.OSHandler;
 import de.wwu.trap.Utils.FileComparator;
 import de.wwu.trap.Utils.FileManipulator;
+import de.wwu.trap.Utils.TooltipManipulator;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -33,7 +35,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.web.WebView;
@@ -54,34 +58,37 @@ public class FxGuiController extends Application implements Initializable {
 
 	@FXML
 	public void launchSPM(ActionEvent e) {
-		
-		new Thread(){
+
+		new Thread() {
 			public void run() {
 				prepareAndStartSpm();
 			}
 		}.start();
-		
-		
-	}
-	
-	@Override
-    public void start(Stage stage) throws Exception {
-        String fxmlFile = "/MainGui.fxml";
-        FXMLLoader loader = new FXMLLoader();
-        Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
-        
-        Scene scene = new Scene(rootNode);
-//        scene.getStylesheets().add("/styles/styles.css");
 
-        stage.setTitle("SPMLauncher.fx");
-        stage.setScene(scene);
-        
-        stage.show();
-    }
-	
+	}
+
+	private HashMap<File, String> tooltips;
+
+	@Override
+	public void start(Stage stage) throws Exception {
+		String fxmlFile = "/MainGui.fxml";
+		FXMLLoader loader = new FXMLLoader();
+		Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
+
+		Scene scene = new Scene(rootNode);
+		// scene.getStylesheets().add("/styles/styles.css");
+
+		stage.setTitle("SPMLauncher.fx");
+		stage.setScene(scene);
+
+		stage.show();
+	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+
+		tooltips = OSHandler.getTooltips();
+
 		/*
 		 * SPM versions
 		 */
@@ -96,6 +103,29 @@ public class FxGuiController extends Application implements Initializable {
 
 		});
 		spmComboBox.getSelectionModel().selectFirst();
+
+		spmComboBox.setCellFactory(param -> new ListCell<File>() {
+			@Override
+			protected void updateItem(File item, boolean empty) {
+				super.updateItem(item, empty);
+
+				if (item != null) {
+					setText(item.getName());
+					String tooltipText;
+					if (tooltips != null && (tooltipText = tooltips.get(item)) != null) {
+						Tooltip tt = new Tooltip(tooltipText);
+						TooltipManipulator.makeTooltipInstant(tt);
+
+						setTooltip(tt);
+					} else {
+						setTooltip(null);
+					}
+				} else {
+					setText(null);
+					setTooltip(null);
+				}
+			}
+		});
 
 		/*
 		 * Changelog
@@ -158,10 +188,23 @@ public class FxGuiController extends Application implements Initializable {
 
 				ComboBox<File> comboBox = new ComboBox<>(FXCollections.observableArrayList(toolboxVersions));
 				comboxBoxList.add(comboBox);
-				
-				CheckBox checkBox = new CheckBox(toolboxVersions[0].getParentFile().getName());
-				checkBox.setPrefWidth(Double.MAX_VALUE);
 
+				File nonVersionedToolboxDir = toolboxVersions[0].getParentFile();
+				CheckBox checkBox = new CheckBox(nonVersionedToolboxDir.getName());
+				{
+					/*
+					 * set Tooltip for CheckBox of the Toolbox
+					 */
+					String tooltipText;
+					if (tooltips != null && (tooltipText = tooltips.get(nonVersionedToolboxDir)) != null) {
+						Tooltip tt = new Tooltip(tooltipText);
+						TooltipManipulator.makeTooltipInstant(tt);
+
+						checkBox.setTooltip(tt);
+					}
+				}
+
+				checkBox.setPrefWidth(Double.MAX_VALUE);
 				checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
 
 					@Override
@@ -174,6 +217,28 @@ public class FxGuiController extends Application implements Initializable {
 
 				checkBox.setSelected(isStandard);
 				comboBox.setDisable(!isStandard);
+				comboBox.setCellFactory(param -> new ListCell<File>() {
+					@Override
+					protected void updateItem(File item, boolean empty) {
+						super.updateItem(item, empty);
+
+						if (item != null) {
+							setText(item.getName());
+							String tooltipText;
+							if (tooltips != null && (tooltipText = tooltips.get(item)) != null) {
+								Tooltip tt = new Tooltip(tooltipText);
+								TooltipManipulator.makeTooltipInstant(tt);
+
+								setTooltip(tt);
+							} else {
+								setTooltip(null);
+							}
+						} else {
+							setText(null);
+							setTooltip(null);
+						}
+					}
+				});
 
 				comboBox.getSelectionModel().selectFirst();
 				comboBox.setPrefWidth(Double.MAX_VALUE);
@@ -187,10 +252,9 @@ public class FxGuiController extends Application implements Initializable {
 		}
 
 	}
-	
 
 	public void prepareAndStartSpm() {
-		
+
 		File spmDir = spmComboBox.getValue();
 		LinkedList<File> activatedToolboxes = new LinkedList<>();
 		for (ComboBox<File> comboBox : this.comboxBoxList) {
@@ -198,16 +262,16 @@ public class FxGuiController extends Application implements Initializable {
 				activatedToolboxes.add(comboBox.getValue());
 			}
 		}
-		
+
 		Platform.exit();
-		
+
 		LinkedList<File> mountResult = OSHandler.createMounts(spmDir, activatedToolboxes);
-		
+
 		Thread shutdownHook = new Thread() {
-			
+
 			@Override
 			public void run() {
-				
+
 				try {
 					OSHandler.umountAllDirs(mountResult, App.LAUNCHER_UUID.toString());
 					OSHandler.p.destroy();
@@ -221,8 +285,7 @@ public class FxGuiController extends Application implements Initializable {
 		Runtime.getRuntime().addShutdownHook(shutdownHook);
 
 		if (activatedToolboxes.size() + 1 != mountResult.size()) {
-			JOptionPane.showMessageDialog(null, "Could not mount the directories!", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Could not mount the directories!", "Error", JOptionPane.ERROR_MESSAGE);
 			OSHandler.umountAllDirs(mountResult, App.LAUNCHER_UUID.toString());
 			System.exit(1);
 			return;
