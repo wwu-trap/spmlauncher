@@ -406,7 +406,7 @@ public class OSHandler {
 			CSVRecord record = csvIterator.next();
 			try {
 				File dir = new File(App.MANAGED_SOFTWARE_DIR, record.get(0));
-				tooltipsMap.put(dir, record.get(1));
+				tooltipsMap.put(dir, record.get(1).replace("\\n", "\n"));
 			} catch (Exception e) {
 			}
 		}
