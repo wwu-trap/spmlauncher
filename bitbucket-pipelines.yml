@@ -11,4 +11,6 @@ pipelines:
         caches:
           - maven
         script: # Modify the commands below to build your repository.
-          - mvn package # -B batch mode makes Maven less verbose
+          - apt-get update
+          - apt-get install -y openjfx
+          - mvn -B package # -B batch mode makes Maven less verbose
