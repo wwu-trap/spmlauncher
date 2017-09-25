@@ -9,7 +9,6 @@ compile with:
 mvn package (.jar lands in target/ directory)
 
 ##Setup
-* create /tmp/SPMLauncher with chmod 777
 * create /opt/applications/SPMLauncher/ManagedSoftware/spm with spm installations
 * create /opt/applications/SPMLauncher/ManagedSoftware/toolbox with toolboxes
 * add tmp-mount to /usr/local/bin with 777

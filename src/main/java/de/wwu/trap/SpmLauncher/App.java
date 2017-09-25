@@ -63,6 +63,15 @@ public class App {
 	 *            the arguments from the commandline
 	 */
 	public static void main(String[] args) {
+		//Create MOUNT_DIR with chmod 777
+		File mountDir = new File(App.MOUNT_DIR);
+		if(!mountDir.exists()){
+			mountDir.mkdirs();
+			mountDir.setReadable(true, false);
+			mountDir.setWritable(true, false);
+			mountDir.setExecutable(true, false);
+		}
+		
 		boolean enableFx = false;
 
 		for (String arg : args) {
