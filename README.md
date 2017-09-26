@@ -45,8 +45,8 @@ ManagedSoftware
 │   │   ├── launch.sh (chmod 777)
 │   │   └── toolbox
 │   └── spm8
-│   │   ├── launch.sh (chmod 777)
-│   │   └── toolbox
+│       ├── launch.sh (chmod 777)
+│       └── toolbox
 └── toolbox
     ├── spm12
     │   ├── cat
