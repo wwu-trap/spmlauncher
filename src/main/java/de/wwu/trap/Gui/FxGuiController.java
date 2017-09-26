@@ -253,7 +253,15 @@ public class FxGuiController extends Application implements Initializable {
 
 	}
 
+	boolean spmAlreadyStarted = false;
+
 	public void prepareAndStartSpm() {
+
+		if (spmAlreadyStarted) {
+			return;
+		} else {
+			spmAlreadyStarted = true;
+		}
 
 		File spmDir = spmComboBox.getValue();
 		LinkedList<File> activatedToolboxes = new LinkedList<>();
