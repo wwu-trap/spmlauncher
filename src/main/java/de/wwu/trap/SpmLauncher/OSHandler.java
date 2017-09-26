@@ -72,10 +72,6 @@ public class OSHandler {
 
 			p = pb.start();
 
-			// Process p = Runtime.getRuntime().exec(launchCommand);
-
-			// BufferedReader br = new BufferedReader(new
-			// InputStreamReader(p.getInputStream()));
 			Thread p1 = new Thread() {
 				@Override
 				public void run() {
@@ -94,6 +90,7 @@ public class OSHandler {
 				}
 			};
 			p1.start();
+			
 			Thread p2 = new Thread() {
 				@Override
 				public void run() {
@@ -112,7 +109,25 @@ public class OSHandler {
 				}
 			};
 			p2.start();
-
+			
+			Thread p3 = new Thread() {
+				@Override
+				public void run() {
+					PrintWriter pw = new PrintWriter(p.getOutputStream());
+					
+					BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+					String line = "";
+					try {
+						while ((line = br.readLine()) != null) {
+							pw.println(line);
+							pw.flush();
+						}
+					} catch (IOException e) {
+					}
+				}
+			};
+			p3.start();
+			
 			p.waitFor();
 
 		} catch (IOException | InterruptedException e) {
