@@ -72,7 +72,7 @@ public class App {
 			mountDir.setExecutable(true, false);
 		}
 		
-		boolean enableFx = false;
+		boolean enableFx = true;
 
 		for (String arg : args) {
 			if (arg.equalsIgnoreCase("--no-console") || arg.equalsIgnoreCase("-nc")) {
@@ -87,8 +87,8 @@ public class App {
 				}
 			}
 
-			if (arg.equalsIgnoreCase("--enable-fx")) {
-				enableFx = true;
+			if (arg.equalsIgnoreCase("--disable-fx")) {
+				enableFx = false;
 			}
 
 		}
