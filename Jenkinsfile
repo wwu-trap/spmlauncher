@@ -1,12 +1,12 @@
 pipeline {
   agent {
     dockerfile {
-      filename 'hjk'
+      filename 'dockerfile'
     }
     
   }
   stages {
-    stage('') {
+    stage('error') {
       steps {
         echo 'vnvbn'
       }
