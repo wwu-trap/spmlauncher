@@ -1,16 +1,9 @@
-pipeline {
-  docker.withServer('tcp://trap-titania.uni-muenster.de:4243') {
-    agent {
-      dockerfile {
-        filename 'dockerfile'
-      }
+node {
+    checkout scm
+
+    docker.withServer('tcp://trap-titania.uni-muenster.de:4243') {
+        docker.image('mysql:5').withRun('-p 3306:3306') {
+            /* do things */
+        }
     }
-  }
-  stages {
-    stage('ASD') {
-      steps {
-        timestamps()
-      }
-    }
-  }
 }
