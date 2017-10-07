@@ -6,9 +6,9 @@ pipeline {
     
   }
   stages {
-    stage('error') {
+    stage('ASD') {
       steps {
-        echo 'vnvbn'
+        timestamps()
       }
     }
   }
