@@ -51,8 +51,8 @@ public class OSHandler {
 	public static Process p;
 
 	/**
-	 * This method searches for the launch_command.txt within the spmDir and
-	 * starts the spm installation with it
+	 * This method searches for the launch_command.txt within the spmDir and starts
+	 * the spm installation with it
 	 * 
 	 * @param tmpSpmDir
 	 *            the temporary mount SPM directory with a launch.sh in it
@@ -90,7 +90,7 @@ public class OSHandler {
 				}
 			};
 			p1.start();
-			
+
 			Thread p2 = new Thread() {
 				@Override
 				public void run() {
@@ -109,12 +109,12 @@ public class OSHandler {
 				}
 			};
 			p2.start();
-			
+
 			Thread p3 = new Thread() {
 				@Override
 				public void run() {
 					PrintWriter pw = new PrintWriter(p.getOutputStream());
-					
+
 					BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 					String line = "";
 					try {
@@ -127,7 +127,7 @@ public class OSHandler {
 				}
 			};
 			p3.start();
-			
+
 			p.waitFor();
 
 		} catch (IOException | InterruptedException e) {
@@ -139,9 +139,9 @@ public class OSHandler {
 	/**
 	 * This method mounts the spm installation with the chosen toolboxes to a
 	 * temporary directory (e.g.
-	 * App.MOUNT_DIR/6d9e5da2-cd28-43c8-af46-9f5e3e29d7de), so spm can be
-	 * started with and only with the specified toolboxes. It also creates a log
-	 * file in case this Launcher crashes.
+	 * App.MOUNT_DIR/6d9e5da2-cd28-43c8-af46-9f5e3e29d7de), so spm can be started
+	 * with and only with the specified toolboxes. It also creates a log file in
+	 * case this Launcher crashes.
 	 * 
 	 * @param spmDir
 	 *            the path to the chosen spm installation
@@ -242,8 +242,8 @@ public class OSHandler {
 	}
 
 	/**
-	 * This method checks, whether the SPM-installation has the necessary
-	 * subdirs to create the mounts for the toolboxes
+	 * This method checks, whether the SPM-installation has the necessary subdirs to
+	 * create the mounts for the toolboxes
 	 * 
 	 * @param spmDir
 	 *            the dir of the SPM-installation
@@ -263,8 +263,7 @@ public class OSHandler {
 	/**
 	 * This method unmounts a list of directories. The list doesn't need to be
 	 * sorted. If subdirs of dirs has to be unmounted before the parent, and the
-	 * parent is in this list, the subdir will be unmounted before the
-	 * parentdir.
+	 * parent is in this list, the subdir will be unmounted before the parentdir.
 	 * 
 	 * @param dirs
 	 *            the directories which shall be unmounted
@@ -290,8 +289,8 @@ public class OSHandler {
 	}
 
 	/**
-	 * Tries to unmount dir. dir has to be subdir of App.MOUNT_DIR Tries to
-	 * unmount with sudo App.MOUNT_SCRIPT -u
+	 * Tries to unmount dir. dir has to be subdir of App.MOUNT_DIR Tries to unmount
+	 * with sudo App.MOUNT_SCRIPT -u
 	 * 
 	 * @param dir
 	 *            the dir which will be unmounted
@@ -337,8 +336,8 @@ public class OSHandler {
 
 	/**
 	 * Tries to mount (via rebind) oldDir to newDir. oldDir has to be subdir of
-	 * App.MANAGED_SOFTWARE_DIR and newDir has to be subdir of App.MOUNT_DIR
-	 * Tries to mount with sudo App.MOUNT_SCRIPT -m
+	 * App.MANAGED_SOFTWARE_DIR and newDir has to be subdir of App.MOUNT_DIR Tries
+	 * to mount with sudo App.MOUNT_SCRIPT -m
 	 * 
 	 * @param oldDir
 	 *            source of the mount
@@ -395,11 +394,11 @@ public class OSHandler {
 
 	/**
 	 * This method loads the tooltips.csv from the
-	 * {@link de.wwu.trap.SpmLauncher.App#MANAGED_SOFTWARE_DIR} and puts them in
-	 * a HashMap
+	 * {@link de.wwu.trap.SpmLauncher.App#MANAGED_SOFTWARE_DIR} and puts them in a
+	 * HashMap
 	 * 
-	 * @return the described HashMap<File, String> where the file ist the
-	 *         directory of the spm installation, the toolbox, or the toolbox version.
+	 * @return the described HashMap<File, String> where the file ist the directory
+	 *         of the spm installation, the toolbox, or the toolbox version.
 	 */
 	public static HashMap<File, String> getTooltips() {
 		HashMap<File, String> tooltipsMap = new HashMap<>();
