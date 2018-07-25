@@ -93,7 +93,8 @@ public class FxGuiController extends Application implements Initializable {
 		 * SPM versions
 		 */
 		File[] spmVersions = OSHandler.getSpmVersions();
-		spmComboBox.getItems().addAll(spmVersions);
+		if (spmVersions != null)
+			spmComboBox.getItems().addAll(spmVersions);
 		spmComboBox.valueProperty().addListener(new ChangeListener<File>() {
 
 			@Override
