@@ -32,8 +32,42 @@ import de.wwu.trap.Utils.MountedDirComparator;
 public class OSHandler {
 
 	/**
-	 * Returns all the spm installations. toString method of files overwritten
-	 * to only return name of file and not absolute path
+	 * This method searches for all toolboxes which have an addToPath file. This
+	 * means that the root of the toolbox needs to be added to the MATLAB path.
+	 * 
+	 * @return List of the toolboxes which path needs to be added to the path
+	 */
+	public static List<File> whichToolboxesNeedPathEntry(List<File> activatedToolboxes) {
+		LinkedList<File> pathToolboxes = new LinkedList<>();
+		for (File activatedToolbox : activatedToolboxes) {
+			File pathFile = new File(activatedToolbox.getParentFile(), "addToPath");
+			if (pathFile.exists())
+				pathToolboxes.add(activatedToolbox.getParentFile());
+		}
+		return pathToolboxes;
+	}
+
+	/**
+	 * This method searches for all toolboxes which have an addToPathRecursively
+	 * file. This means that the root and all its subdirs (recursively) of the
+	 * toolbox needs to be added to the MATLAB path.
+	 * 
+	 * @return List of the toolboxes which path needs to be added to the path
+	 *         recursively
+	 */
+	public static List<File> whichToolboxesNeedRecursivePathEntry(List<File> activatedToolboxes) {
+		LinkedList<File> pathToolboxes = new LinkedList<>();
+		for (File activatedToolbox : activatedToolboxes) {
+			File pathFile = new File(activatedToolbox.getParentFile(), "addToPathRecursively");
+			if (pathFile.exists())
+				pathToolboxes.add(activatedToolbox.getParentFile());
+		}
+		return pathToolboxes;
+	}
+
+	/**
+	 * Returns all the spm installations. toString method of files overwritten to
+	 * only return name of file and not absolute path
 	 * 
 	 * @return Paths to the spm installations
 	 */
@@ -50,25 +84,40 @@ public class OSHandler {
 
 	public static Process p;
 
+	private static String activatedToolboxesToString(List<File> activatedToolboxes) {
+		String toolboxesAsString = "";
+		for (File activatedToolbox : activatedToolboxes) {
+			if (!toolboxesAsString.equalsIgnoreCase("")) {
+				toolboxesAsString += " ";
+			}
+			toolboxesAsString += activatedToolbox.getName();
+		}
+		return toolboxesAsString;
+	}
+
 	/**
 	 * This method searches for the launch_command.txt within the spmDir and starts
 	 * the spm installation with it
 	 * 
 	 * @param tmpSpmDir
 	 *            the temporary mount SPM directory with a launch.sh in it
+	 * @param activatedToolboxes
 	 * @return
 	 */
-	public static void startSpmAndWait(File tmpSpmDir) {
-		System.out.println("Starting " + tmpSpmDir.getName());
-		String launchCommand = tmpSpmDir.getAbsolutePath() + "/launch.sh " + tmpSpmDir.getAbsolutePath();
+	public static void startSpmAndWait(File tmpSpmDir, List<File> activatedToolboxes) {
 
-		System.out.println("Starting with: " + launchCommand);
+		String pathToolboxes = activatedToolboxesToString(whichToolboxesNeedPathEntry(activatedToolboxes));
+		String pathToolboxesRec = activatedToolboxesToString(whichToolboxesNeedRecursivePathEntry(activatedToolboxes));
+
+		System.out.println("Starting " + tmpSpmDir.getName());
+		String[] launchCommand = { tmpSpmDir.getAbsolutePath() + "/launch.sh", tmpSpmDir.getAbsolutePath(),
+				pathToolboxes, pathToolboxesRec };
 
 		/*
 		 * Start spm and wait
 		 */
 		try {
-			ProcessBuilder pb = new ProcessBuilder(launchCommand.split(" "));
+			ProcessBuilder pb = new ProcessBuilder(launchCommand);
 
 			p = pb.start();
 
