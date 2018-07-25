@@ -73,7 +73,7 @@ public class FxGuiController extends Application implements Initializable {
 	public void start(Stage stage) throws Exception {
 		String fxmlFile = "/MainGui.fxml";
 		FXMLLoader loader = new FXMLLoader();
-		Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
+		Parent rootNode = loader.load(getClass().getResourceAsStream(fxmlFile));
 
 		Scene scene = new Scene(rootNode);
 		// scene.getStylesheets().add("/styles/styles.css");
