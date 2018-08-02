@@ -71,10 +71,39 @@ ManagedSoftware
 Every toolbox needs a subdirectory in the toolbox-directory of the spm installation with the excact same name!
 
 Every spm installation needs a launch.sh with command to start the spm installation. The launch.sh will be called with the tmpSpmDir as argument. The launch file should be executable. That means chmod 777 and #!/bin/bash in first line. 
-Example:
+A simple example:
 ~~~~  
 #!/bin/bash
 
 nice -n +1 /opt/applications/matlab/R2012a/bin/matlab -r "path('$1',path); path('$1/toolbox/mania',path); cd('/spm-data'); spm fmri; "  -nodesktop -nosplash
 ~~~~  
- 
+It is advised to use the following launch script so toolboxes can be dynamically (and if wished also recursively) added to the MATLAB path:
+~~~
+#!/bin/bash
+
+
+PATH_COMMANDS="path('$1',path);  "
+MATLAB_BIN="/opt/applications/matlab/R2012a/bin/matlab"
+
+#$2: add toolbox to path, non recursive
+#$3: add toolbox to path, recursive
+
+cd $1
+
+for toolbox in $2; do
+    PATH_COMMANDS="$PATH_COMMANDS path('$1/toolbox/$toolbox',path); ";
+done
+
+
+for toolbox in $3; do
+    for subdir in $(find toolbox/$toolbox -type d | grep -v "@"); do
+        PATH_COMMANDS="$PATH_COMMANDS path('$1/$subdir',path); ";
+    done
+done
+
+COMMAND="nice -n +1 $MATLAB_BIN -r \"$PATH_COMMANDS cd('/spm-data'); spm fmri; \"  -nodesktop -nosplash"
+
+echo -e "Starting SPM with the following command:\n    $(echo $COMMAND | sed -e 's/path); /path); \n\t/g')"
+eval $COMMAND
+
+~~~
