@@ -3,6 +3,7 @@
 ##Requirements
 * Maven
 * Java 8
+* JavaFX (with openjdk install openjfx)
 
 ##Build
 compile with:
