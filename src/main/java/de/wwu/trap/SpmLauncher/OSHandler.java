@@ -104,14 +104,14 @@ public class OSHandler {
 	 * @param activatedToolboxes
 	 * @return
 	 */
-	public static void startSpmAndWait(File tmpSpmDir, List<File> activatedToolboxes) {
+	public static void startSpmAndWait(File tmpSpmDir, List<File> activatedToolboxes, boolean devmode) {
 
 		String pathToolboxes = activatedToolboxesToString(whichToolboxesNeedPathEntry(activatedToolboxes));
 		String pathToolboxesRec = activatedToolboxesToString(whichToolboxesNeedRecursivePathEntry(activatedToolboxes));
 
 		System.out.println("Starting " + tmpSpmDir.getName());
 		String[] launchCommand = { tmpSpmDir.getAbsolutePath() + "/launch.sh", tmpSpmDir.getAbsolutePath(),
-				pathToolboxes, pathToolboxesRec };
+				pathToolboxes, pathToolboxesRec, devmode ? "devmode" : "" };
 
 		/*
 		 * Start spm and wait

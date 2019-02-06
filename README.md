@@ -102,9 +102,12 @@ for toolbox in $3; do
     done
 done
 
-COMMAND="nice -n +1 $MATLAB_BIN -r \"$PATH_COMMANDS cd('/spm-data'); spm fmri; \"  -nodesktop -nosplash"
+if [ $4 = "devmode" ]; then
+    COMMAND="nice -n +1 $MATLAB_BIN -r \"$PATH_COMMANDS cd('/spm-data'); spm fmri; \"  -desktop"
+else
+    COMMAND="nice -n +1 $MATLAB_BIN -r \"$PATH_COMMANDS cd('/spm-data'); spm fmri; \"  -nodesktop -nosplash"
+fi
 
 echo -e "Starting SPM with the following command:\n    $(echo $COMMAND | sed -e 's/path); /path); \n\t/g')"
 eval $COMMAND
-
 ~~~

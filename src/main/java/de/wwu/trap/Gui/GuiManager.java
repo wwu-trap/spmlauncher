@@ -158,7 +158,7 @@ public class GuiManager {
 			@Override
 			public void run() {
 				File tmpSpmDir = new File(App.MOUNT_DIR + "/" + App.LAUNCHER_UUID.toString());
-				OSHandler.startSpmAndWait(tmpSpmDir, activatedToolboxes);
+				OSHandler.startSpmAndWait(tmpSpmDir, activatedToolboxes, false);
 			}
 		};
 		p1.start();

@@ -160,6 +160,7 @@ public class FxGuiController extends Application implements Initializable {
 	}
 
 	private LinkedList<ComboBox<File>> comboxBoxList = new LinkedList<>();
+	private CheckBox devmodeCheckBox;
 	private int toolboxCount = 0;
 
 	public void chooseSpmVersion(File spmDir) {
@@ -252,6 +253,28 @@ public class FxGuiController extends Application implements Initializable {
 			}
 		}
 
+		/*
+		 * Add CheckBox for developer mode
+		 */
+		devmodeCheckBox = new CheckBox("Developer mode");
+		{
+			/*
+			 * set Tooltip
+			 */
+			String tooltipText = "Starts SPM with Matlab desktop mode";
+			Tooltip tt = new Tooltip(tooltipText);
+			TooltipManipulator.makeTooltipInstant(tt);
+
+			devmodeCheckBox.setTooltip(tt);
+
+		}
+
+		devmodeCheckBox.setPrefWidth(Double.MAX_VALUE);
+		devmodeCheckBox.setSelected(false);
+
+		toolboxPane.add(devmodeCheckBox, 0, toolboxCount);
+		toolboxCount++;
+
 	}
 
 	boolean spmAlreadyStarted = false;
@@ -304,7 +327,7 @@ public class FxGuiController extends Application implements Initializable {
 			@Override
 			public void run() {
 				File tmpSpmDir = new File(App.MOUNT_DIR + "/" + App.LAUNCHER_UUID.toString());
-				OSHandler.startSpmAndWait(tmpSpmDir, activatedToolboxes);
+				OSHandler.startSpmAndWait(tmpSpmDir, activatedToolboxes, devmodeCheckBox.isSelected());
 			}
 		};
 		p1.start();
