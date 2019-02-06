@@ -178,6 +178,8 @@ public class FxGuiController extends Application implements Initializable {
 
 			for (File toolbox : toolboxes) {
 				File[] toolboxVersions = toolbox.listFiles((dir) -> dir.isDirectory());
+				if(toolboxVersions.length == 0)
+					continue;
 				FileManipulator.onlyNameInToString(toolboxVersions);
 				Arrays.sort(toolboxVersions, new FileComparator<>(true));
 
