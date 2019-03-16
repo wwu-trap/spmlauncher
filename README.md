@@ -27,6 +27,8 @@ MOUNT_DIR=/tmp/SPMLauncher
 
 if [ "$1" = "-m" ] ; then
         /bin/mount --bind $MANAGED_SOFTWARE_DIR/$2 $MOUNT_DIR/$3
+        /bin/mount --make-slave $MOUNT_DIR/$3
+
 elif [ "$1" = "-u" ] ; then
         /bin/umount -l $MOUNT_DIR/$2
 fi
