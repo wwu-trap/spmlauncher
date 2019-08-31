@@ -159,24 +159,6 @@ public class OSHandler {
 			};
 			p2.start();
 
-			Thread p3 = new Thread() {
-				@Override
-				public void run() {
-					PrintWriter pw = new PrintWriter(p.getOutputStream());
-
-					BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-					String line = "";
-					try {
-						while ((line = br.readLine()) != null) {
-							pw.println(line);
-							pw.flush();
-						}
-					} catch (IOException e) {
-					}
-				}
-			};
-			p3.start();
-
 			p.waitFor();
 
 		} catch (IOException | InterruptedException e) {
