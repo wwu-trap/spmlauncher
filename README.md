@@ -1,15 +1,15 @@
 # README #
 
-##Requirements
+## Requirements
 * Maven
 * Java 8
 * JavaFX (with openjdk install openjfx)
 
-##Build
+## Build
 compile with:
 mvn package (.jar lands in target/ directory)
 
-##Setup
+## Setup
 * create /opt/applications/SPMLauncher/ManagedSoftware/spm with spm installations
 * create /opt/applications/SPMLauncher/ManagedSoftware/toolbox with toolboxes
 * add tmp-mount to /usr/local/bin with 777
