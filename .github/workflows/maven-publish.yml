@@ -24,5 +24,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: target/SPMLauncher-*.jar
+        name: SPMLauncher v${GITHUB_REF/refs\/tags\//}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
