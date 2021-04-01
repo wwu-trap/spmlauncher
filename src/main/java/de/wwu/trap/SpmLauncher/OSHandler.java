@@ -255,21 +255,8 @@ public class OSHandler {
 		return mountedDirs;
 	}
 
-	public static int getPid() {
-		int pid = -1;
-		try {
-			java.lang.management.RuntimeMXBean runtime = java.lang.management.ManagementFactory.getRuntimeMXBean();
-			java.lang.reflect.Field jvm = runtime.getClass().getDeclaredField("jvm");
-			jvm.setAccessible(true);
-			sun.management.VMManagement mgmt = (sun.management.VMManagement) jvm.get(runtime);
-			java.lang.reflect.Method pid_method = mgmt.getClass().getDeclaredMethod("getProcessId");
-			pid_method.setAccessible(true);
-
-			pid = (Integer) pid_method.invoke(mgmt);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return pid;
+	public static long getPid() {
+		return ProcessHandle.current().pid();
 	}
 
 	/**
