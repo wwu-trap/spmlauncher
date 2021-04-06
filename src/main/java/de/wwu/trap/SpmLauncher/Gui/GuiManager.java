@@ -1,4 +1,4 @@
-package de.wwu.trap.Gui;
+package de.wwu.trap.SpmLauncher.Gui;
 
 import java.awt.EventQueue;
 import java.io.BufferedReader;
@@ -16,8 +16,8 @@ import org.commonmark.renderer.html.HtmlRenderer;
 
 import de.wwu.trap.SpmLauncher.App;
 import de.wwu.trap.SpmLauncher.OSHandler;
-import de.wwu.trap.Utils.FileComparator;
-import de.wwu.trap.Utils.FileManipulator;
+import de.wwu.trap.SpmLauncher.Utils.FileComparator;
+import de.wwu.trap.SpmLauncher.Utils.FileManipulator;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.web.WebView;

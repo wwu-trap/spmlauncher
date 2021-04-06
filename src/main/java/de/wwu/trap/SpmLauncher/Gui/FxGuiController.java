@@ -1,4 +1,4 @@
-package de.wwu.trap.Gui;
+package de.wwu.trap.SpmLauncher.Gui;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,9 +18,9 @@ import org.commonmark.renderer.html.HtmlRenderer;
 
 import de.wwu.trap.SpmLauncher.App;
 import de.wwu.trap.SpmLauncher.OSHandler;
-import de.wwu.trap.Utils.FileComparator;
-import de.wwu.trap.Utils.FileManipulator;
-import de.wwu.trap.Utils.TooltipManipulator;
+import de.wwu.trap.SpmLauncher.Utils.FileComparator;
+import de.wwu.trap.SpmLauncher.Utils.FileManipulator;
+import de.wwu.trap.SpmLauncher.Utils.TooltipManipulator;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -73,7 +73,7 @@ public class FxGuiController extends Application implements Initializable {
 	public void start(Stage stage) throws Exception {
 		String fxmlFile = "/MainGui.fxml";
 		FXMLLoader loader = new FXMLLoader();
-		Parent rootNode = loader.load(getClass().getResourceAsStream(fxmlFile));
+		Parent rootNode = loader.load(FxGuiController.class.getResourceAsStream(fxmlFile));
 
 		Scene scene = new Scene(rootNode);
 		// scene.getStylesheets().add("/styles/styles.css");

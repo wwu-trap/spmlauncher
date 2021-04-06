@@ -1,4 +1,4 @@
-package de.wwu.trap.Utils;
+package de.wwu.trap.SpmLauncher.Utils;
 
 import java.io.File;
 

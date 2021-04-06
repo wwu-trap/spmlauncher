@@ -1,4 +1,4 @@
-package de.wwu.trap.Gui;
+package de.wwu.trap.SpmLauncher.Gui;
 
 import java.awt.Font;
 import java.io.File;

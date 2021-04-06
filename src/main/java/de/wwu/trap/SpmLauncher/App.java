@@ -7,8 +7,8 @@ import java.util.UUID;
 
 import javax.swing.UIManager;
 
-import de.wwu.trap.Gui.GuiManager;
-import de.wwu.trap.Gui.FxGuiController;
+import de.wwu.trap.SpmLauncher.Gui.GuiManager;
+import de.wwu.trap.SpmLauncher.Gui.FxGuiController;
 
 /**
  * 

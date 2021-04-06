@@ -19,9 +19,9 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-import de.wwu.trap.Utils.FileComparator;
-import de.wwu.trap.Utils.FileManipulator;
-import de.wwu.trap.Utils.MountedDirComparator;
+import de.wwu.trap.SpmLauncher.Utils.FileComparator;
+import de.wwu.trap.SpmLauncher.Utils.FileManipulator;
+import de.wwu.trap.SpmLauncher.Utils.MountedDirComparator;
 
 /**
  * This class holds static methods to do stuff related to the OS like

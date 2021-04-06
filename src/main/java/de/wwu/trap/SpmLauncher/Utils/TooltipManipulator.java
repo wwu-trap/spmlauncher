@@ -1,4 +1,4 @@
-package de.wwu.trap.Utils;
+package de.wwu.trap.SpmLauncher.Utils;
 
 import javafx.scene.control.Tooltip;
 import javafx.util.Duration;
