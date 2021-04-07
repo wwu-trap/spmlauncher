@@ -38,6 +38,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.web.WebView;
@@ -79,6 +80,7 @@ public class FxGuiController extends Application implements Initializable {
 		// scene.getStylesheets().add("/styles/styles.css");
 
 		stage.setTitle("SPMLauncher.fx");
+		stage.getIcons().add(new Image(getClass().getResourceAsStream("/spm12.png")));
 		stage.setScene(scene);
 
 		stage.show();
