@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.controlsfx.control.ToggleSwitch;
 
 import de.wwu.trap.SpmLauncher.App;
 import de.wwu.trap.SpmLauncher.OSHandler;
@@ -37,12 +38,17 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.JMetroStyleClass;
+import jfxtras.styles.jmetro.Style;
 
 public class FxGuiController extends Application implements Initializable {
 	@FXML
@@ -58,6 +64,21 @@ public class FxGuiController extends Application implements Initializable {
 	private ComboBox<File> spmComboBox;
 
 	@FXML
+	private Tooltip tt1;
+	
+	@FXML
+	private ToggleSwitch devmodeCheckBox;
+
+	@FXML
+	private ScrollPane changelogPane;
+
+	@FXML
+	private VBox root;
+	
+	@FXML
+	private SplitPane splitPane;
+
+	@FXML
 	public void launchSPM(ActionEvent e) {
 
 		new Thread() {
@@ -69,6 +90,7 @@ public class FxGuiController extends Application implements Initializable {
 	}
 
 	private HashMap<File, String> tooltips;
+	private JMetro jMetro = new JMetro(Style.LIGHT);
 
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -77,9 +99,17 @@ public class FxGuiController extends Application implements Initializable {
 		Parent rootNode = loader.load(FxGuiController.class.getResourceAsStream(fxmlFile));
 
 		Scene scene = new Scene(rootNode);
-		// scene.getStylesheets().add("/styles/styles.css");
+//		scene.getStylesheets().add("/styles/styles.css");
+		
+		jMetro.setScene(scene);
 
-		stage.setTitle("SPMLauncher.fx");
+
+		String versionNumber = getClass().getPackage().getImplementationVersion();
+		String title = "SPMLauncher";
+		if(versionNumber != null) 
+			title += " v" + versionNumber;
+		
+		stage.setTitle(title);
 		stage.getIcons().add(new Image(getClass().getResourceAsStream("/spm12.png")));
 		stage.setScene(scene);
 
@@ -88,8 +118,10 @@ public class FxGuiController extends Application implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
 
 		tooltips = OSHandler.getTooltips();
+		TooltipManipulator.makeTooltipInstant(tt1);
 
 		/*
 		 * SPM versions
@@ -136,7 +168,12 @@ public class FxGuiController extends Application implements Initializable {
 		File changelogFile = new File(App.MANAGED_SOFTWARE_DIR, "changelog.md");
 		if (changelogFile == null || !changelogFile.exists()) {
 			System.out.println("No or empty changelog! (" + changelogFile.getAbsolutePath() + ")");
-			return;
+			
+			/*
+			 * Remove the changelog view
+			 */
+			splitPane.getItems().remove(changelogPane);
+			root.setPrefWidth(root.getPrefWidth()/2.0);
 		} else {
 			/*
 			 * Parsing the Markdown file to HTML
@@ -162,7 +199,6 @@ public class FxGuiController extends Application implements Initializable {
 	}
 
 	private LinkedList<ComboBox<File>> comboxBoxList = new LinkedList<>();
-	private CheckBox devmodeCheckBox;
 	private int toolboxCount = 0;
 
 	public void chooseSpmVersion(File spmDir) {
@@ -273,29 +309,6 @@ public class FxGuiController extends Application implements Initializable {
 				toolboxCount++;
 			}
 		}
-
-		/*
-		 * Add CheckBox for developer mode
-		 */
-		devmodeCheckBox = new CheckBox("Developer mode");
-		{
-			/*
-			 * set Tooltip
-			 */
-			String tooltipText = "Starts SPM with Matlab desktop mode";
-			Tooltip tt = new Tooltip(tooltipText);
-			TooltipManipulator.makeTooltipInstant(tt);
-
-			devmodeCheckBox.setTooltip(tt);
-
-		}
-
-		devmodeCheckBox.setPrefWidth(Double.MAX_VALUE);
-		devmodeCheckBox.setSelected(false);
-
-		toolboxPane.add(devmodeCheckBox, 0, toolboxCount);
-		toolboxCount++;
-
 	}
 
 	boolean spmAlreadyStarted = false;
