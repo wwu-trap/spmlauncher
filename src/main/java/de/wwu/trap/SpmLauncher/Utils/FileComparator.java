@@ -17,10 +17,11 @@ public class FileComparator<T> implements Comparator<File> {
 
 	@Override
 	public int compare(File o1, File o2) {
+		NaturalOrderComparator<String> noc = new NaturalOrderComparator<>();
 		if(!inversed){
-			return String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName());				
+			return noc.compare(o1.getName().toLowerCase(), o2.getName().toLowerCase());	
 		}else{
-			return String.CASE_INSENSITIVE_ORDER.compare(o2.getName(), o1.getName());
+			return noc.compare(o2.getName().toLowerCase(), o1.getName().toLowerCase());
 		}
 	}
 
