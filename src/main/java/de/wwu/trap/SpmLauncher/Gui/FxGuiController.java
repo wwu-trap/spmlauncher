@@ -100,14 +100,21 @@ public class FxGuiController extends Application implements Initializable {
 	public void applyDarkTheme(MouseEvent e) {
 		if (e.getSource() instanceof ToggleSwitch) {
 			ToggleSwitch ts = (ToggleSwitch) e.getSource();
-			
-			if (ts.isSelected()) {
-				changelogView.getEngine().setUserStyleSheetLocation(getClass().getResource("/changelog-dark.css").toString());
-				new JMetro(Style.DARK).setParent(root);
-			} else {
-				changelogView.getEngine().setUserStyleSheetLocation(getClass().getResource("/changelog.css").toString());
-				new JMetro(Style.LIGHT).setParent(root);
-			}
+			applyDarkTheme(ts.isSelected());
+		}
+	}
+	
+	public void applyDarkTheme(boolean dark) {
+		if (dark) {
+			changelogView.getEngine().setUserStyleSheetLocation(getClass().getResource("/changelog-dark.css").toString());
+			new JMetro(Style.DARK).setParent(root);
+			toolBoxScroll.setStyle("-fx-background-color: #323232");
+			toolBoxScroll.setStyle("-fx-border-color: #000000");
+		} else {
+			changelogView.getEngine().setUserStyleSheetLocation(getClass().getResource("/changelog.css").toString());
+			new JMetro(Style.LIGHT).setParent(root);
+			toolBoxScroll.setStyle("-fx-background-color: #e6e6e6");
+			toolBoxScroll.setStyle("-fx-border-color: #FFFFFF");
 		}
 	}
 
@@ -121,10 +128,8 @@ public class FxGuiController extends Application implements Initializable {
 		Parent rootNode = loader.load(FxGuiController.class.getResourceAsStream(fxmlFile));
 
 		Scene scene = new Scene(rootNode);
-//		scene.getStylesheets().add("/styles/styles.css");
 		
 		jMetro.setScene(scene);
-
 
 		String versionNumber = getClass().getPackage().getImplementationVersion();
 		String title = "SPMLauncher";
@@ -141,6 +146,7 @@ public class FxGuiController extends Application implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
+		applyDarkTheme(false);
 
 		tooltips = OSHandler.getTooltips();
 		TooltipManipulator.makeTooltipInstant(tt1);
