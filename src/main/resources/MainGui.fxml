@@ -17,7 +17,7 @@
 
 <?import org.controlsfx.control.ToggleSwitch?>
 
-<VBox fx:id="root" prefHeight="650.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.wwu.trap.SpmLauncher.Gui.FxGuiController">
+<VBox fx:id="root" prefHeight="650.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.wwu.trap.SpmLauncher.Gui.FxGuiController">
   <children>
   <!--  
     <MenuBar VBox.vgrow="NEVER">
