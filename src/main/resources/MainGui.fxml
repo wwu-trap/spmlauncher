@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.geometry.Point3D?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -93,9 +92,6 @@
                            </tooltip></ToggleSwitch>
                         <Label layoutX="15.0" layoutY="111.0" prefHeight="26.0" text="Toolboxes:" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="100.0" />
                         <ToggleSwitch layoutX="410.0" onMouseClicked="#applyDarkTheme" scaleX="0.5" scaleY="0.5" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <rotationAxis>
-                              <Point3D />
-                           </rotationAxis>
                            <tooltip>
                               <Tooltip fx:id="ttDarkMode" text="dark mode" />
                            </tooltip></ToggleSwitch>
