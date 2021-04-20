@@ -199,10 +199,19 @@ public class FxGuiController extends Application implements Initializable {
 				CheckBox checkBox = new CheckBox(nonVersionedToolboxDir.getName());
 				{
 					/*
+					 * Get real path of toolbox (if softlinks are used for multiple builds of the same spm version 
+					 */
+					File canonicalNonVersionedToolboxDir = nonVersionedToolboxDir;
+					try {
+						canonicalNonVersionedToolboxDir = new File(nonVersionedToolboxDir.getCanonicalPath());
+					} catch (IOException e) {
+					}
+					
+					/*
 					 * set Tooltip for CheckBox of the Toolbox
 					 */
 					String tooltipText;
-					if (tooltips != null && (tooltipText = tooltips.get(nonVersionedToolboxDir)) != null) {
+					if (tooltips != null && (tooltipText = tooltips.get(canonicalNonVersionedToolboxDir)) != null) {
 						Tooltip tt = new Tooltip(tooltipText);
 						TooltipManipulator.makeTooltipInstant(tt);
 
@@ -231,7 +240,15 @@ public class FxGuiController extends Application implements Initializable {
 						if (item != null) {
 							setText(item.getName());
 							String tooltipText;
-							if (tooltips != null && (tooltipText = tooltips.get(item)) != null) {
+							/*
+							 * Get real path of toolbox (if softlinks are used for multiple builds of the same spm version 
+							 */
+							File canonicalNonVersionedToolboxDir = item;
+							try {
+								canonicalNonVersionedToolboxDir = new File(item.getCanonicalPath());
+							} catch (IOException e) {
+							}
+							if (tooltips != null && (tooltipText = tooltips.get(canonicalNonVersionedToolboxDir)) != null) {
 								Tooltip tt = new Tooltip(tooltipText);
 								TooltipManipulator.makeTooltipInstant(tt);
 
