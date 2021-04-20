@@ -86,7 +86,7 @@
                         <ComboBox fx:id="spmComboBox" layoutX="175.0" layoutY="60.0" prefHeight="26.0" prefWidth="214.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0" />
                         <Label layoutX="16.0" layoutY="95.0" prefHeight="26.0" text="MATLAB version" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="55.0" />
                         <ComboBox fx:id="matlabComboBox" layoutX="191.0" layoutY="95.0" prefHeight="26.0" prefWidth="240.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="55.0" />
-                        <ToggleSwitch contentDisplay="RIGHT" layoutY="605.0" mnemonicParsing="false" prefHeight="26.0" text="dev mode" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="65.0">
+                        <ToggleSwitch fx:id="devmodeCheckBox" contentDisplay="RIGHT" layoutY="605.0" mnemonicParsing="false" prefHeight="26.0" text="dev mode" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="65.0">
                            <tooltip>
                               <Tooltip fx:id="tt1" text="Open MATLAB in desktop mode" />
                            </tooltip></ToggleSwitch>
