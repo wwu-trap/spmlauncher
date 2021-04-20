@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.Point3D?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -83,14 +84,21 @@
                               </GridPane>
                            </content>
                         </ScrollPane>
-                        <ComboBox fx:id="spmComboBox" layoutX="175.0" layoutY="60.0" prefHeight="26.0" prefWidth="214.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0" />
+                        <ComboBox fx:id="spmComboBox" layoutX="175.0" layoutY="60.0" prefHeight="26.0" prefWidth="214.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="15.0" />
                         <Label layoutX="16.0" layoutY="95.0" prefHeight="26.0" text="MATLAB version" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="55.0" />
-                        <ComboBox fx:id="matlabComboBox" layoutX="191.0" layoutY="95.0" prefHeight="26.0" prefWidth="240.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="55.0" />
+                        <ComboBox fx:id="matlabComboBox" layoutX="191.0" layoutY="95.0" prefHeight="26.0" prefWidth="240.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="55.0" />
                         <ToggleSwitch fx:id="devmodeCheckBox" contentDisplay="RIGHT" layoutY="605.0" mnemonicParsing="false" prefHeight="26.0" text="dev mode" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="65.0">
                            <tooltip>
                               <Tooltip fx:id="tt1" text="Open MATLAB in desktop mode" />
                            </tooltip></ToggleSwitch>
                         <Label layoutX="15.0" layoutY="111.0" prefHeight="26.0" text="Toolboxes:" underline="true" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="95.0" />
+                        <ToggleSwitch layoutX="410.0" onMouseClicked="#applyDarkTheme" scaleX="0.5" scaleY="0.5" AnchorPane.rightAnchor="-15.0" AnchorPane.topAnchor="0.0">
+                           <rotationAxis>
+                              <Point3D />
+                           </rotationAxis>
+                           <tooltip>
+                              <Tooltip fx:id="ttDarkMode" text="dark mode" />
+                           </tooltip></ToggleSwitch>
               </children>
             </AnchorPane>
           </content>

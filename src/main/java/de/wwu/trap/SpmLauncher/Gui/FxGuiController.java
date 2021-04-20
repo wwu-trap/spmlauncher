@@ -41,6 +41,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -68,7 +69,10 @@ public class FxGuiController extends Application implements Initializable {
 
 	@FXML
 	private Tooltip tt1;
-	
+
+	@FXML
+	private Tooltip ttDarkMode;
+
 	@FXML
 	private ToggleSwitch devmodeCheckBox;
 
@@ -90,6 +94,21 @@ public class FxGuiController extends Application implements Initializable {
 			}
 		}.start();
 
+	}
+
+	@FXML
+	public void applyDarkTheme(MouseEvent e) {
+		if (e.getSource() instanceof ToggleSwitch) {
+			ToggleSwitch ts = (ToggleSwitch) e.getSource();
+			
+			if (ts.isSelected()) {
+				changelogView.getEngine().setUserStyleSheetLocation(getClass().getResource("/changelog-dark.css").toString());
+				new JMetro(Style.DARK).setParent(root);
+			} else {
+				changelogView.getEngine().setUserStyleSheetLocation(getClass().getResource("/changelog.css").toString());
+				new JMetro(Style.LIGHT).setParent(root);
+			}
+		}
 	}
 
 	private HashMap<File, String> tooltips;
@@ -125,6 +144,7 @@ public class FxGuiController extends Application implements Initializable {
 
 		tooltips = OSHandler.getTooltips();
 		TooltipManipulator.makeTooltipInstant(tt1);
+		TooltipManipulator.makeTooltipInstant(ttDarkMode);
 
 		/*
 		 * MATLAB versions
