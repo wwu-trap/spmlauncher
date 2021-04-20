@@ -91,8 +91,8 @@
                            <tooltip>
                               <Tooltip fx:id="tt1" text="Open MATLAB in desktop mode" />
                            </tooltip></ToggleSwitch>
-                        <Label layoutX="15.0" layoutY="111.0" prefHeight="26.0" text="Toolboxes:" underline="true" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="95.0" />
-                        <ToggleSwitch layoutX="410.0" onMouseClicked="#applyDarkTheme" scaleX="0.5" scaleY="0.5" AnchorPane.rightAnchor="-15.0" AnchorPane.topAnchor="0.0">
+                        <Label layoutX="15.0" layoutY="111.0" prefHeight="26.0" text="Toolboxes:" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="100.0" />
+                        <ToggleSwitch layoutX="410.0" onMouseClicked="#applyDarkTheme" scaleX="0.5" scaleY="0.5" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <rotationAxis>
                               <Point3D />
                            </rotationAxis>
