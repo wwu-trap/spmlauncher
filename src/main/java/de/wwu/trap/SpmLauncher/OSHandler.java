@@ -82,6 +82,24 @@ public class OSHandler {
 		return spms;
 	}
 
+	/**
+	 * Return all MATLAB installation paths. Searching in PATH, /opt/, and /usr/local/
+	 * TODO: search for windows (and mac) paths
+	 * toString method of files overwritten to only return name of file and not absolute path
+	 * @return Paths to the MATLAB installations
+	 */
+	public static File[] getMatlabVersions() {
+		File optMatlabDir = new File("/opt/applications/MATLAB/");
+		
+		File[] matlabDirs = optMatlabDir.listFiles((e) -> e.isDirectory());
+		if (matlabDirs != null) {
+			FileManipulator.onlyNameInToString(matlabDirs);
+			Arrays.sort(matlabDirs, new FileComparator<File>(false));
+		}
+		
+		return matlabDirs;
+	}
+
 	public static Process p;
 
 	private static String activatedToolboxesToString(List<File> activatedToolboxes) {

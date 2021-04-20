@@ -64,6 +64,9 @@ public class FxGuiController extends Application implements Initializable {
 	private ComboBox<File> spmComboBox;
 
 	@FXML
+	private ComboBox<File> matlabComboBox;
+
+	@FXML
 	private Tooltip tt1;
 	
 	@FXML
@@ -122,6 +125,32 @@ public class FxGuiController extends Application implements Initializable {
 
 		tooltips = OSHandler.getTooltips();
 		TooltipManipulator.makeTooltipInstant(tt1);
+
+		/*
+		 * MATLAB versions
+		 */
+		File[] matlabVersions = OSHandler.getMatlabVersions();
+		if (matlabVersions != null)
+			matlabComboBox.getItems().addAll(matlabVersions);
+		matlabComboBox.getSelectionModel().selectLast();
+		matlabComboBox.setCellFactory(param -> new ListCell<File>() {
+			@Override
+			protected void updateItem(File item, boolean empty) {
+				super.updateItem(item, empty);
+
+				if (item != null) {
+					setText(item.getName());
+					String tooltipText = item.getAbsolutePath();
+					Tooltip tt = new Tooltip(tooltipText);
+					TooltipManipulator.makeTooltipInstant(tt);
+
+					setTooltip(tt);
+				} else {
+					setText(null);
+					setTooltip(null);
+				}
+			}
+		});
 
 		/*
 		 * SPM versions
