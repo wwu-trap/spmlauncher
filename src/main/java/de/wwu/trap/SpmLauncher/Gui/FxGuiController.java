@@ -205,6 +205,7 @@ public class FxGuiController extends Application implements Initializable {
 		if (spmDir == null)
 			return;
 		toolboxPane.getChildren().clear();
+		toolboxPane.setVgap(10);
 		comboxBoxList.clear();
 		toolboxCount = 0;
 
