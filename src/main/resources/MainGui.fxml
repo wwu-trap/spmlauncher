@@ -65,10 +65,10 @@
             <AnchorPane id="Content" fx:id="leftPane" minHeight="-1.0" minWidth="-1.0">
               <children>
                         <Button layoutX="192.0" layoutY="136.0" minHeight="22.0" minWidth="145.0" mnemonicParsing="false" onAction="#launchSPM" text="Launch SPM" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="225.0" />
-                        <Label layoutX="21.0" layoutY="60.0" prefHeight="26.0" text="SPM version:" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0" />
-                        <ScrollPane fx:id="toolBoxScroll" fitToWidth="true" layoutX="21.0" layoutY="148.0" minWidth="50.0" prefHeight="440.0" prefWidth="416.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="120.0">
+                        <Label layoutX="21.0" layoutY="60.0" prefHeight="26.0" text="SPM version:" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="25.0" />
+                        <ScrollPane fx:id="toolBoxScroll" fitToWidth="true" layoutX="21.0" layoutY="148.0" minWidth="50.0" prefHeight="440.0" prefWidth="416.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="125.0">
                            <content>
-                              <GridPane fx:id="toolboxPane" hgap="5.0" vgap="5.0">
+                              <GridPane fx:id="toolboxPane" hgap="10.0" vgap="10.0">
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -79,14 +79,14 @@
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <padding>
-                                    <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </padding>
                               </GridPane>
                            </content>
                         </ScrollPane>
-                        <ComboBox fx:id="spmComboBox" layoutX="175.0" layoutY="60.0" prefHeight="26.0" prefWidth="214.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="15.0" />
-                        <Label layoutX="16.0" layoutY="95.0" prefHeight="26.0" text="MATLAB version" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="55.0" />
-                        <ComboBox fx:id="matlabComboBox" layoutX="191.0" layoutY="95.0" prefHeight="26.0" prefWidth="240.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="55.0" />
+                        <ComboBox fx:id="spmComboBox" layoutX="175.0" layoutY="60.0" prefHeight="26.0" prefWidth="214.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="25.0" />
+                        <Label layoutX="16.0" layoutY="95.0" prefHeight="26.0" text="MATLAB version" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="65.0" />
+                        <ComboBox fx:id="matlabComboBox" layoutX="191.0" layoutY="95.0" prefHeight="26.0" prefWidth="240.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="65.0" />
                         <ToggleSwitch fx:id="devmodeCheckBox" contentDisplay="RIGHT" layoutY="605.0" mnemonicParsing="false" prefHeight="26.0" text="dev mode" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="65.0">
                            <tooltip>
                               <Tooltip fx:id="tt1" text="Open MATLAB in desktop mode" />
