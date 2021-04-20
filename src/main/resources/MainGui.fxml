@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -14,7 +13,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
-
 <?import org.controlsfx.control.ToggleSwitch?>
 
 <VBox fx:id="root" prefHeight="650.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.wwu.trap.SpmLauncher.Gui.FxGuiController">
@@ -65,9 +63,9 @@
           <content>
             <AnchorPane id="Content" fx:id="leftPane" minHeight="-1.0" minWidth="-1.0">
               <children>
-                        <Button layoutX="192.0" layoutY="136.0" minHeight="22.0" minWidth="145.0" mnemonicParsing="false" onAction="#launchSPM" text="Launch SPM" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="150.0" />
+                        <Button layoutX="192.0" layoutY="136.0" minHeight="22.0" minWidth="145.0" mnemonicParsing="false" onAction="#launchSPM" text="Launch SPM" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="225.0" />
                         <Label layoutX="21.0" layoutY="60.0" prefHeight="26.0" text="SPM version:" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0" />
-                        <ScrollPane fx:id="toolBoxScroll" fitToWidth="true" layoutX="21.0" layoutY="163.0" minWidth="50.0" prefHeight="453.0" prefWidth="416.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="120.0">
+                        <ScrollPane fx:id="toolBoxScroll" fitToWidth="true" layoutX="21.0" layoutY="148.0" minWidth="50.0" prefHeight="440.0" prefWidth="416.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="120.0">
                            <content>
                               <GridPane fx:id="toolboxPane" hgap="5.0" vgap="5.0">
                                 <columnConstraints>
@@ -86,13 +84,13 @@
                            </content>
                         </ScrollPane>
                         <ComboBox fx:id="spmComboBox" layoutX="175.0" layoutY="60.0" prefHeight="26.0" prefWidth="214.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0" />
-                        <Label layoutX="16.0" layoutY="95.0" prefHeight="26.0" text="MATLAB version" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="50.0" />
-                        <ComboBox fx:id="spmComboBox1" layoutX="191.0" layoutY="95.0" prefHeight="26.0" prefWidth="240.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="50.0" />
-                        <Label layoutX="28.0" layoutY="130.0" prefHeight="26.0" text="Developer mode" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="85.0">
+                        <Label layoutX="16.0" layoutY="95.0" prefHeight="26.0" text="MATLAB version" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="55.0" />
+                        <ComboBox fx:id="spmComboBox1" layoutX="191.0" layoutY="95.0" prefHeight="26.0" prefWidth="240.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="55.0" />
+                        <ToggleSwitch contentDisplay="RIGHT" layoutY="605.0" mnemonicParsing="false" prefHeight="26.0" text="dev mode" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="65.0">
                            <tooltip>
                               <Tooltip fx:id="tt1" text="Open MATLAB in desktop mode" />
-                           </tooltip></Label>
-                        <ToggleSwitch contentDisplay="RIGHT" layoutX="200.0" layoutY="130.0" mnemonicParsing="false" prefHeight="26.0" AnchorPane.leftAnchor="200.0" AnchorPane.topAnchor="85.0" />
+                           </tooltip></ToggleSwitch>
+                        <Label layoutX="15.0" layoutY="111.0" prefHeight="26.0" text="Toolboxes:" underline="true" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="95.0" />
               </children>
             </AnchorPane>
           </content>
