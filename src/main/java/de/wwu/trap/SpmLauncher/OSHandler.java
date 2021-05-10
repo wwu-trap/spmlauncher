@@ -10,10 +10,14 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -88,14 +92,32 @@ public class OSHandler {
 	 * toString method of files overwritten to only return name of file and not absolute path
 	 * @return Paths to the MATLAB installations
 	 */
-	public static File[] getMatlabVersions() {
-		File optMatlabDir = new File("/opt/applications/MATLAB/");
+	public static List<File> getMatlabVersions() {
+		List<File> matlabDirs = new LinkedList<>();
+		File[] possibleMatlabDirs = {
+			new File("/opt/applications/MATLAB/"),
+			new File("/opt/MATLAB/"),
+			new File("/usr/local/MATLAB/"),
+		};
 		
-		File[] matlabDirs = optMatlabDir.listFiles((e) -> e.isDirectory());
-		if (matlabDirs != null) {
-			FileManipulator.onlyNameInToString(matlabDirs);
-			Arrays.sort(matlabDirs, new FileComparator<File>(false));
+		
+		for(File matlabDir : possibleMatlabDirs) {
+			if(!matlabDir.exists()) 
+				continue;
+						
+			File[] foundMatlabDirs = matlabDir.listFiles((file, name) -> {
+				if(file.isFile())
+					return false;
+				return Pattern.matches("R\\d{4}[a-z]", name);
+			});
+			
+			Collections.addAll(matlabDirs, foundMatlabDirs);
 		}
+		
+		FileManipulator.replaceWithCanonicalPath(matlabDirs);
+		FileManipulator.onlyNameInToString(matlabDirs);
+		matlabDirs.sort(Comparator.naturalOrder());
+		matlabDirs = matlabDirs.stream().distinct().collect(Collectors.toList());
 		
 		return matlabDirs;
 	}

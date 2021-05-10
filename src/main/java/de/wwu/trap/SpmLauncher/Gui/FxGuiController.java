@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
@@ -155,7 +156,7 @@ public class FxGuiController extends Application implements Initializable {
 		/*
 		 * MATLAB versions
 		 */
-		File[] matlabVersions = OSHandler.getMatlabVersions();
+		List<File> matlabVersions = OSHandler.getMatlabVersions();
 		if (matlabVersions != null)
 			matlabComboBox.getItems().addAll(matlabVersions);
 		matlabComboBox.getSelectionModel().selectLast();
