@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class FileManipulator {
-	
+
 	public static File onlyNameInToString(File f) {
 		f = new File(f.getAbsolutePath()) {
 			private static final long serialVersionUID = 7025340296172367872L;
@@ -23,7 +23,7 @@ public class FileManipulator {
 			fs[i] = onlyNameInToString(fs[i]);
 		}
 	}
-	
+
 	public static void onlyNameInToString(List<File> fs) {
 		for (int i = 0; i < fs.size(); i++) {
 			fs.set(i, onlyNameInToString(fs.get(i)));

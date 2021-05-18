@@ -26,8 +26,8 @@ public class App {
 
 	/**
 	 * The directory in which the temporary mounts this Launcher creates will be
-	 * placed. If this constant is changed, be aware that you also have to
-	 * change the tmp-mount script!
+	 * placed. If this constant is changed, be aware that you also have to change
+	 * the tmp-mount script!
 	 */
 	public static final String MOUNT_DIR = "/tmp/SPMLauncher";
 
@@ -38,14 +38,14 @@ public class App {
 	public static final String MOUNT_SCRIPT = "/usr/local/bin/tmp-mount";
 
 	/**
-	 * The suffix for the name of the file in which the pids of the SPMLauncher
-	 * and the launched SPM installation are stored.
+	 * The suffix for the name of the file in which the pids of the SPMLauncher and
+	 * the launched SPM installation are stored.
 	 */
 	public static final String PID_LOG_SUFFIX = "_pids.txt";
 
 	/**
-	 * The suffix for the name of the file in which a list with created mounts
-	 * are stored.
+	 * The suffix for the name of the file in which a list with created mounts are
+	 * stored.
 	 */
 	public static final String MOUNT_LOG_SUFFIX = "_mounts.txt";
 
@@ -59,19 +59,18 @@ public class App {
 	/**
 	 * The official entry point of this java application.
 	 * 
-	 * @param args
-	 *            the arguments from the commandline
+	 * @param args the arguments from the commandline
 	 */
 	public static void main(String[] args) {
-		//Create MOUNT_DIR with chmod 777
+		// Create MOUNT_DIR with chmod 777
 		File mountDir = new File(App.MOUNT_DIR);
-		if(!mountDir.exists()){
+		if (!mountDir.exists()) {
 			mountDir.mkdirs();
 			mountDir.setReadable(true, false);
 			mountDir.setWritable(true, false);
 			mountDir.setExecutable(true, false);
 		}
-		
+
 		boolean enableFx = true;
 
 		for (String arg : args) {
@@ -105,7 +104,6 @@ public class App {
 		} else {
 			FxGuiController.launch(FxGuiController.class, args);
 		}
-
 
 	}
 }

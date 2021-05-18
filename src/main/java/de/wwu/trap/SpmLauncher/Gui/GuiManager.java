@@ -101,7 +101,8 @@ public class GuiManager {
 
 				Platform.runLater(() -> {
 					WebView webView = new WebView();
-					//TODO get css dynamically if /.../SPMLauncher/ManagedSoftware/changelog.css exists
+					// TODO get css dynamically if /.../SPMLauncher/ManagedSoftware/changelog.css
+					// exists
 					webView.getEngine().setUserStyleSheetLocation(getClass().getResource("/changelog.css").toString());
 					webView.getEngine().loadContent(changelog);
 					GuiManager.this.gui.changelogPanel.setScene(new Scene(webView));
@@ -122,14 +123,14 @@ public class GuiManager {
 				activatedToolboxes.add((File) comboBox.getSelectedItem());
 			}
 		}
-		
+
 		LinkedList<File> mountResult = OSHandler.createMounts(spmDir, activatedToolboxes);
-		
+
 		Thread shutdownHook = new Thread() {
-			
+
 			@Override
 			public void run() {
-				
+
 				try {
 					OSHandler.umountAllDirs(mountResult, App.LAUNCHER_UUID.toString());
 					OSHandler.p.destroy();

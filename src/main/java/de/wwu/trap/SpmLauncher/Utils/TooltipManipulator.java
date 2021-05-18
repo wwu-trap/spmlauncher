@@ -5,8 +5,8 @@ import javafx.util.Duration;
 
 public class TooltipManipulator {
 
-	public static void makeTooltipInstant(Tooltip tt){
+	public static void makeTooltipInstant(Tooltip tt) {
 		tt.setShowDelay(Duration.seconds(0.05));
 	}
-	
+
 }

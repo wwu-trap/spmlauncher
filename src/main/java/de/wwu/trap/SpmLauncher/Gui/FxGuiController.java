@@ -82,7 +82,7 @@ public class FxGuiController extends Application implements Initializable {
 
 	@FXML
 	private VBox root;
-	
+
 	@FXML
 	private SplitPane splitPane;
 
@@ -104,10 +104,11 @@ public class FxGuiController extends Application implements Initializable {
 			applyDarkTheme(ts.isSelected());
 		}
 	}
-	
+
 	public void applyDarkTheme(boolean dark) {
 		if (dark) {
-			changelogView.getEngine().setUserStyleSheetLocation(getClass().getResource("/changelog-dark.css").toString());
+			changelogView.getEngine()
+					.setUserStyleSheetLocation(getClass().getResource("/changelog-dark.css").toString());
 			new JMetro(Style.DARK).setParent(root);
 			toolBoxScroll.setStyle("-fx-background-color: #323232");
 			toolBoxScroll.setStyle("-fx-border-color: #000000");
@@ -129,14 +130,14 @@ public class FxGuiController extends Application implements Initializable {
 		Parent rootNode = loader.load(FxGuiController.class.getResourceAsStream(fxmlFile));
 
 		Scene scene = new Scene(rootNode);
-		
+
 		jMetro.setScene(scene);
 
 		String versionNumber = getClass().getPackage().getImplementationVersion();
 		String title = "SPMLauncher";
-		if(versionNumber != null) 
+		if (versionNumber != null)
 			title += " v" + versionNumber;
-		
+
 		stage.setTitle(title);
 		stage.getIcons().add(new Image(getClass().getResourceAsStream("/spm12.png")));
 		stage.setScene(scene);
@@ -224,12 +225,12 @@ public class FxGuiController extends Application implements Initializable {
 		File changelogFile = new File(App.MANAGED_SOFTWARE_DIR, "changelog.md");
 		if (changelogFile == null || !changelogFile.exists()) {
 			System.out.println("No or empty changelog! (" + changelogFile.getAbsolutePath() + ")");
-			
+
 			/*
 			 * Remove the changelog view
 			 */
 			splitPane.getItems().remove(changelogPane);
-			root.setPrefWidth(root.getPrefWidth()/2.0);
+			root.setPrefWidth(root.getPrefWidth() / 2.0);
 		} else {
 			/*
 			 * Parsing the Markdown file to HTML
@@ -272,7 +273,7 @@ public class FxGuiController extends Application implements Initializable {
 
 			for (File toolbox : toolboxes) {
 				File[] toolboxVersions = toolbox.listFiles((dir) -> dir.isDirectory());
-				if(toolboxVersions.length == 0)
+				if (toolboxVersions.length == 0)
 					continue;
 				FileManipulator.onlyNameInToString(toolboxVersions);
 				Arrays.sort(toolboxVersions, new FileComparator<>(true));
@@ -291,14 +292,15 @@ public class FxGuiController extends Application implements Initializable {
 				CheckBox checkBox = new CheckBox(nonVersionedToolboxDir.getName());
 				{
 					/*
-					 * Get real path of toolbox (if softlinks are used for multiple builds of the same spm version 
+					 * Get real path of toolbox (if softlinks are used for multiple builds of the
+					 * same spm version
 					 */
 					File canonicalNonVersionedToolboxDir = nonVersionedToolboxDir;
 					try {
 						canonicalNonVersionedToolboxDir = new File(nonVersionedToolboxDir.getCanonicalPath());
 					} catch (IOException e) {
 					}
-					
+
 					/*
 					 * set Tooltip for CheckBox of the Toolbox
 					 */
@@ -333,14 +335,16 @@ public class FxGuiController extends Application implements Initializable {
 							setText(item.getName());
 							String tooltipText;
 							/*
-							 * Get real path of toolbox (if softlinks are used for multiple builds of the same spm version 
+							 * Get real path of toolbox (if softlinks are used for multiple builds of the
+							 * same spm version
 							 */
 							File canonicalNonVersionedToolboxDir = item;
 							try {
 								canonicalNonVersionedToolboxDir = new File(item.getCanonicalPath());
 							} catch (IOException e) {
 							}
-							if (tooltips != null && (tooltipText = tooltips.get(canonicalNonVersionedToolboxDir)) != null) {
+							if (tooltips != null
+									&& (tooltipText = tooltips.get(canonicalNonVersionedToolboxDir)) != null) {
 								Tooltip tt = new Tooltip(tooltipText);
 								TooltipManipulator.makeTooltipInstant(tt);
 
