@@ -417,7 +417,9 @@ public class FxGuiController extends Application implements Initializable {
 			@Override
 			public void run() {
 				File tmpSpmDir = new File(App.MOUNT_DIR + "/" + App.LAUNCHER_UUID.toString());
-				OSHandler.startSpmAndWait(tmpSpmDir, activatedToolboxes, devmodeCheckBox.isSelected());
+				File matlabDir = matlabComboBox.getSelectionModel().getSelectedItem();
+				OSHandler.buildLaunchCmdStartAndWait(matlabDir, tmpSpmDir, activatedToolboxes,
+						devmodeCheckBox.isSelected());
 			}
 		};
 		p1.start();
