@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
 import javax.swing.JOptionPane;
 
@@ -87,6 +88,9 @@ public class FxGuiController extends Application implements Initializable {
 	private SplitPane splitPane;
 
 	@FXML
+	private ToggleSwitch darkModeSwitch;
+
+	@FXML
 	public void launchSPM(ActionEvent e) {
 
 		new Thread() {
@@ -106,6 +110,9 @@ public class FxGuiController extends Application implements Initializable {
 	}
 
 	public void applyDarkTheme(boolean dark) {
+		Preferences prefs = Preferences.userNodeForPackage(getClass());
+		prefs.put("DARK_MODE", Boolean.toString(dark));
+
 		if (dark) {
 			changelogView.getEngine()
 					.setUserStyleSheetLocation(getClass().getResource("/changelog-dark.css").toString());
@@ -148,7 +155,6 @@ public class FxGuiController extends Application implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
-		applyDarkTheme(false);
 
 		tooltips = OSHandler.getTooltips();
 		TooltipManipulator.makeTooltipInstant(tt1);
@@ -251,6 +257,15 @@ public class FxGuiController extends Application implements Initializable {
 			changelogView.getEngine().loadContent(changelog);
 			changelogView.getEngine().setUserStyleSheetLocation(getClass().getResource("/changelog.css").toString());
 
+		}
+
+		Preferences prefs = Preferences.userNodeForPackage(getClass());
+		String enableDarkMode = prefs.get("DARK_MODE", "false");
+		if (enableDarkMode.equalsIgnoreCase("true")) {
+			darkModeSwitch.setSelected(true);
+			applyDarkTheme(true);
+		} else {
+			applyDarkTheme(false);
 		}
 
 	}
