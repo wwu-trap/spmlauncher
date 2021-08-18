@@ -46,13 +46,14 @@ public class Gui {
 
 	/**
 	 * Initialize the contents of the frame.
+	 * 
 	 * @wbp.parser.entryPoint
 	 */
 	public void initialize(File[] spmVersions) {
 		frame = new JFrame("SPM Launcher");
 		frame.setBounds(100, 100, 900, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.getContentPane().setLayout(null);
@@ -68,7 +69,7 @@ public class Gui {
 		frame.getContentPane().add(lblSpmVersion);
 
 		spmVersionComboBox = new JComboBox<>();
-		if(spmVersions != null)
+		if (spmVersions != null)
 			spmVersionComboBox.setModel(new DefaultComboBoxModel<File>(spmVersions));
 		spmVersionComboBox.setBounds(182, 71, 242, 24);
 		frame.getContentPane().add(spmVersionComboBox);
@@ -100,13 +101,11 @@ public class Gui {
 
 		ImageIcon icon = new ImageIcon(Gui.class.getResource("/spm12.png"));
 		frame.setIconImage(icon.getImage());
-		
+
 		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-		
+
 //		clearAndSetupToolboxes();
 	}
-	
-	
 
 	private GroupLayout groupLayout;
 	LinkedList<JComboBox<File>> comboxBoxList = new LinkedList<>();
@@ -126,12 +125,10 @@ public class Gui {
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(groupLayout
 				.createSequentialGroup().addGroup(checkBoxGroup).addGap(5).addGroup(comboBoxGroup).addContainerGap()));
 
-		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(pairGroup));
+		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(pairGroup));
 
 		panel.setLayout(groupLayout);
-		
-		
+
 		frame.getContentPane().remove(scrollPane);
 		scrollPane = new JScrollPane(panel);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
@@ -143,23 +140,24 @@ public class Gui {
 	}
 
 	public void addToolbox(File[] toolBoxVersionDirs, boolean selected) {
-		if(toolBoxVersionDirs == null || toolBoxVersionDirs.length == 0){
+		if (toolBoxVersionDirs == null || toolBoxVersionDirs.length == 0) {
 			return;
 		}
-		
+
 		JComboBox<File> comboBox = new JComboBox<>(toolBoxVersionDirs);
-		JCheckBox checkBox = new JCheckBox(toolBoxVersionDirs[0].getParentFile().getName()); 
+		JCheckBox checkBox = new JCheckBox(toolBoxVersionDirs[0].getParentFile().getName());
 		checkBox.setSelected(selected);
 		checkBox.addActionListener((x) -> comboBox.setEnabled(checkBox.isSelected()));
 		comboBox.setEnabled(checkBox.isSelected());
 		comboxBoxList.add(comboBox);
-		
+
 		checkBoxGroup.addComponent(checkBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
 		comboBoxGroup.addComponent(comboBox, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
 
 		pairGroup
 				.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)
+						.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+								GroupLayout.PREFERRED_SIZE)
 						.addComponent(checkBox))
 				.addPreferredGap(ComponentPlacement.UNRELATED);
 

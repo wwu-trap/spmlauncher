@@ -12,14 +12,13 @@ import java.util.Comparator;
  */
 public class MountedDirComparator implements Comparator<File> {
 
-	
 	@Override
 	public int compare(File f1, File f2) {
-		
+
 		int depthFile1 = f1.getAbsolutePath().split("/").length;
 		int depthFile2 = f2.getAbsolutePath().split("/").length;
-		
-		return (int)Math.signum(depthFile2 - depthFile1);
+
+		return (int) Math.signum(depthFile2 - depthFile1);
 	}
 
 }

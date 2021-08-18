@@ -8,12 +8,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -22,6 +28,7 @@ import org.apache.commons.csv.CSVRecord;
 import de.wwu.trap.SpmLauncher.Utils.FileComparator;
 import de.wwu.trap.SpmLauncher.Utils.FileManipulator;
 import de.wwu.trap.SpmLauncher.Utils.MountedDirComparator;
+import de.wwu.trap.SpmLauncher.Utils.RedirectInputStreamFiltered;
 
 /**
  * This class holds static methods to do stuff related to the OS like
@@ -82,6 +89,39 @@ public class OSHandler {
 		return spms;
 	}
 
+	/**
+	 * Return all MATLAB installation paths. Searching in PATH, /opt/, and
+	 * /usr/local/ TODO: search for windows (and mac) paths toString method of files
+	 * overwritten to only return name of file and not absolute path
+	 * 
+	 * @return Paths to the MATLAB installations
+	 */
+	public static List<File> getMatlabVersions() {
+		List<File> matlabDirs = new LinkedList<>();
+		File[] possibleMatlabDirs = { new File("/opt/applications/MATLAB/"), new File("/opt/MATLAB/"),
+				new File("/usr/local/MATLAB/"), };
+
+		for (File matlabDir : possibleMatlabDirs) {
+			if (!matlabDir.exists())
+				continue;
+
+			File[] foundMatlabDirs = matlabDir.listFiles((file, name) -> {
+				if (file.isFile())
+					return false;
+				return Pattern.matches("R\\d{4}[a-z]", name);
+			});
+
+			Collections.addAll(matlabDirs, foundMatlabDirs);
+		}
+
+		FileManipulator.replaceWithCanonicalPath(matlabDirs);
+		FileManipulator.onlyNameInToString(matlabDirs);
+		matlabDirs.sort(Comparator.naturalOrder());
+		matlabDirs = matlabDirs.stream().distinct().collect(Collectors.toList());
+
+		return matlabDirs;
+	}
+
 	public static Process p;
 
 	private static String activatedToolboxesToString(List<File> activatedToolboxes) {
@@ -95,12 +135,137 @@ public class OSHandler {
 		return toolboxesAsString;
 	}
 
+	private static String generateMatlabPathCommand(File tmpSpmDir, List<File> activatedToolboxes) {
+		/*
+		 * Map the toolbox dirs from the source directory e.g.
+		 * .../ManagedSoftare/toolbox/spm12/cat12/r1742 to the tmp spm dir under
+		 * /tmp/SPMLauncher/1e1a0082-7595-457b-8afb-91230a58d0d4/toolbox/cat12
+		 */
+		File spmToolboxDir = new File(tmpSpmDir, "toolbox");
+		HashMap<File, File> tmpActivatedToolboxDirs = new HashMap<>();
+
+		for (File toolboxDir : activatedToolboxes) {
+			String toolboxName = toolboxDir.getParentFile().getName();
+			File tmpToolboxDir = new File(spmToolboxDir, toolboxName);
+			try {
+				toolboxDir = toolboxDir.getCanonicalFile().getParentFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			tmpActivatedToolboxDirs.put(toolboxDir, tmpToolboxDir);
+		}
+
+		/*
+		 * Find out which toolboxes need normal or recursive path entries in MATLAB
+		 */
+		List<File> toolboxes = whichToolboxesNeedPathEntry(activatedToolboxes);
+		List<File> toolboxesRec = whichToolboxesNeedRecursivePathEntry(activatedToolboxes);
+
+		/*
+		 * Generate path entries
+		 */
+		StringBuilder sb = new StringBuilder();
+		sb.append("path('" + tmpSpmDir.getAbsolutePath() + "',path);");
+
+		for (File toolbox : toolboxes) {
+			try {
+				toolbox = toolbox.getCanonicalFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			sb.append("path('" + tmpActivatedToolboxDirs.get(toolbox) + "',path);");
+		}
+
+		for (File toolbox : toolboxesRec) {
+			try {
+				toolbox = toolbox.getCanonicalFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			File tmpToolbox = tmpActivatedToolboxDirs.get(toolbox);
+			if (tmpToolbox == null) {
+				System.out.println("Error: " + toolbox.getAbsolutePath());
+				continue;
+			}
+			try {
+				Files.walk(Paths.get(tmpToolbox.getAbsolutePath())).filter(Files::isDirectory).forEach(path -> {
+					System.out.println(path);
+					sb.append("path('" + path + "',path);");
+				});
+				;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return sb.toString();
+	}
+
+	/**
+	 * This method builds the launch command in MATLAB for the spm installation with
+	 * addPath calls for the toolboxes
+	 * 
+	 * @param matlabDir
+	 * @param tmpSpmDir
+	 * @param activatedToolboxes
+	 * @param devmode
+	 */
+	public static void buildLaunchCmdStartAndWait(File matlabDir, File tmpSpmDir, List<File> activatedToolboxes,
+			boolean devmode) {
+		System.out.println(matlabDir.getAbsolutePath());
+		System.out.println("Starting " + tmpSpmDir.getName());
+
+		LinkedList<String> launchCommand = new LinkedList<>();
+		launchCommand.add(matlabDir.getAbsolutePath() + "/bin/matlab"); // absolute path to matlab binary
+		launchCommand.add("-r");
+		String matlabCommands = generateMatlabPathCommand(tmpSpmDir, activatedToolboxes) + "cd('/spm-data');"
+				+ "spm fmri;"
+//				+ "quit"
+		;
+		launchCommand.add(matlabCommands);
+
+		if (devmode)
+			launchCommand.add("-desktop");
+		else {
+			launchCommand.add("-nodesktop");
+			launchCommand.add("-nosplash");
+		}
+
+		System.out.println("\nStarting MATLAB / SPM with the following command:");
+		for (String s : launchCommand) {
+			System.out.println(s.replace(";", "; \n").replace("path(", "\tpath("));
+		}
+
+		ProcessBuilder pb = new ProcessBuilder().inheritIO().command(launchCommand);
+		pb.redirectOutput(ProcessBuilder.Redirect.PIPE);
+		try {
+			p = pb.start();
+			RedirectInputStreamFiltered.filterAndRedirect(p.getInputStream(), System.out, new Runnable() {
+
+				@Override
+				public void run() {
+					p.destroy();
+				}
+			});
+			p.waitFor();
+
+			/*
+			 * Make the cmd 'sane' again. Otherwise you cannot see what you write after the
+			 * SPMLauncher closes
+			 */
+			new ProcessBuilder().command("stty", "sane").inheritIO().start();
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	/**
 	 * This method searches for the launch_command.txt within the spmDir and starts
 	 * the spm installation with it
 	 * 
-	 * @param tmpSpmDir
-	 *            the temporary mount SPM directory with a launch.sh in it
+	 * @param tmpSpmDir          the temporary mount SPM directory with a launch.sh
+	 *                           in it
 	 * @param activatedToolboxes
 	 * @return
 	 */
@@ -174,10 +339,8 @@ public class OSHandler {
 	 * with and only with the specified toolboxes. It also creates a log file in
 	 * case this Launcher crashes.
 	 * 
-	 * @param spmDir
-	 *            the path to the chosen spm installation
-	 * @param toolboxes
-	 *            the paths to the chosen versions of the toolboxes
+	 * @param spmDir    the path to the chosen spm installation
+	 * @param toolboxes the paths to the chosen versions of the toolboxes
 	 * @return a LinkedList with the dirs which has been mounted successfully
 	 */
 	public static LinkedList<File> createMounts(File spmDir, Collection<File> toolboxes) {
@@ -263,8 +426,7 @@ public class OSHandler {
 	 * This method checks, whether the SPM-installation has the necessary subdirs to
 	 * create the mounts for the toolboxes
 	 * 
-	 * @param spmDir
-	 *            the dir of the SPM-installation
+	 * @param spmDir the dir of the SPM-installation
 	 * @return whether the subdirs exist
 	 */
 	public static boolean checkForNecessarySubdirsForToolboxes(File spmDir) {
@@ -283,8 +445,7 @@ public class OSHandler {
 	 * sorted. If subdirs of dirs has to be unmounted before the parent, and the
 	 * parent is in this list, the subdir will be unmounted before the parentdir.
 	 * 
-	 * @param dirs
-	 *            the directories which shall be unmounted
+	 * @param dirs the directories which shall be unmounted
 	 */
 	public static void umountAllDirs(List<File> dirs, String uuid) {
 		if (dirs == null) {
@@ -310,8 +471,7 @@ public class OSHandler {
 	 * Tries to unmount dir. dir has to be subdir of App.MOUNT_DIR Tries to unmount
 	 * with sudo App.MOUNT_SCRIPT -u
 	 * 
-	 * @param dir
-	 *            the dir which will be unmounted
+	 * @param dir the dir which will be unmounted
 	 * @return whether the unmount was successfull
 	 */
 	private static boolean umount(File dir, boolean delete) {
@@ -357,10 +517,8 @@ public class OSHandler {
 	 * App.MANAGED_SOFTWARE_DIR and newDir has to be subdir of App.MOUNT_DIR Tries
 	 * to mount with sudo App.MOUNT_SCRIPT -m
 	 * 
-	 * @param oldDir
-	 *            source of the mount
-	 * @param newDir
-	 *            target of the mount
+	 * @param oldDir source of the mount
+	 * @param newDir target of the mount
 	 * @return Whether the mount was successfull
 	 */
 	private static boolean mount(File oldDir, File newDir) {
