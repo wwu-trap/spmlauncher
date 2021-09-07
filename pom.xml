@@ -120,7 +120,7 @@
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-swing</artifactId>
-			<version>11</version>
+			<version>17</version>
 		</dependency>
 	</dependencies>
 </project>
