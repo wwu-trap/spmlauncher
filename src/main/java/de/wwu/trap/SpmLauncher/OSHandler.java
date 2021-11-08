@@ -216,6 +216,9 @@ public class OSHandler {
 		System.out.println("Starting " + tmpSpmDir.getName());
 
 		LinkedList<String> launchCommand = new LinkedList<>();
+		launchCommand.add("nice");
+		launchCommand.add("-n");
+		launchCommand.add("+1");
 		launchCommand.add(matlabDir.getAbsolutePath() + "/bin/matlab"); // absolute path to matlab binary
 		launchCommand.add("-r");
 		String matlabCommands = generateMatlabPathCommand(tmpSpmDir, activatedToolboxes) + "cd('/spm-data');"
