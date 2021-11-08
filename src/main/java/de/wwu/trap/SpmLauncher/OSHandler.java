@@ -106,7 +106,7 @@ public class OSHandler {
 				continue;
 
 			File[] foundMatlabDirs = matlabDir.listFiles((file, name) -> {
-				if (file.isFile())
+				if (file.isFile() || !new File(file, "/bin/matlab").exists())
 					return false;
 				return Pattern.matches("R\\d{4}[a-z]", name);
 			});
