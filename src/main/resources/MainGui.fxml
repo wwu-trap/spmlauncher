@@ -93,7 +93,7 @@
                         <Label layoutX="15.0" layoutY="111.0" prefHeight="26.0" text="Toolboxes:" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="100.0" />
                         <ToggleSwitch fx:id="darkModeSwitch" layoutX="410.0" onMouseClicked="#applyDarkTheme" scaleX="0.5" scaleY="0.5" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <tooltip>
-                              <Tooltip fx:id="ttDarkMode" text="dark mode" />
+                              <Tooltip fx:id="ttDarkMode" text="come to the dark side we have cookies..." />
                            </tooltip></ToggleSwitch>
               </children>
             </AnchorPane>
