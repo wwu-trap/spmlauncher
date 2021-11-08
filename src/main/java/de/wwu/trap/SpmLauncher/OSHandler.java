@@ -116,9 +116,15 @@ public class OSHandler {
 
 		FileManipulator.replaceWithCanonicalPath(matlabDirs);
 		FileManipulator.onlyNameInToString(matlabDirs);
-		matlabDirs.sort(Comparator.naturalOrder());
 		matlabDirs = matlabDirs.stream().distinct().collect(Collectors.toList());
+		matlabDirs.sort(new Comparator<File>() {
 
+			@Override
+			public int compare(File arg0, File arg1) {
+				Comparator<String> c = Comparator.naturalOrder();
+				return c.compare(arg0.getName(), arg1.getName());
+			}
+		});
 		return matlabDirs;
 	}
 
