@@ -200,7 +200,7 @@ public class FxGuiController extends Application implements Initializable {
 			}
 
 		});
-		spmComboBox.getSelectionModel().selectFirst();
+		spmComboBox.getSelectionModel().selectLast();
 
 		spmComboBox.setCellFactory(param -> new ListCell<File>() {
 			@Override

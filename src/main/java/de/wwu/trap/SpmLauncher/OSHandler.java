@@ -83,7 +83,7 @@ public class OSHandler {
 		File[] spms = spmDir.listFiles((e) -> e.isDirectory());
 		if (spms != null) {
 			FileManipulator.onlyNameInToString(spms);
-			Arrays.sort(spms, new FileComparator<File>(true));
+			Arrays.sort(spms, new FileComparator<File>(false));
 		}
 
 		return spms;
