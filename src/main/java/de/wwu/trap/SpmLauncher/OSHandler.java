@@ -94,9 +94,11 @@ public class OSHandler {
 	 * /usr/local/ TODO: search for windows (and mac) paths toString method of files
 	 * overwritten to only return name of file and not absolute path
 	 * 
+	 * @param preferredMatlabVersions MATLAB dirs preferred for specific spm dirs
+	 * 
 	 * @return Paths to the MATLAB installations
 	 */
-	public static List<File> getMatlabVersions() {
+	public static List<File> getMatlabVersions(HashMap<File, File> preferredMatlabVersions) {
 		List<File> matlabDirs = new LinkedList<>();
 		File[] possibleMatlabDirs = { new File("/opt/applications/MATLAB/"), new File("/opt/MATLAB/"),
 				new File("/usr/local/MATLAB/"), };
@@ -112,6 +114,10 @@ public class OSHandler {
 			});
 
 			Collections.addAll(matlabDirs, foundMatlabDirs);
+		}
+
+		if (preferredMatlabVersions != null) {
+			matlabDirs.addAll(preferredMatlabVersions.values());
 		}
 
 		FileManipulator.replaceWithCanonicalPath(matlabDirs);
@@ -575,6 +581,60 @@ public class OSHandler {
 		}
 
 		return ret;
+	}
+
+	/**
+	 * Load the preferred_matlab_versions.csv from the
+	 * {@link de.wwu.trap.SpmLauncher.App#MANAGED_SOFTWARE_DIR} and puts them in a
+	 * HashMap
+	 * 
+	 * @return HashMap with spmdir as key and matlabdir as value
+	 */
+	public static HashMap<File, File> loadPreferredMatlabVersions() {
+		HashMap<File, File> matlabVersionsMap = new HashMap<>();
+		File csvFile = new File(App.MANAGED_SOFTWARE_DIR, "preferred_matlab_versions.csv");
+		CSVParser cp;
+		try {
+			Reader reader = new InputStreamReader(new FileInputStream(csvFile));
+			CSVFormat format = CSVFormat.DEFAULT;
+			format.builder().setCommentMarker('#').build();
+			cp = new CSVParser(reader, format);
+		} catch (IOException e) {
+			return null;
+		}
+
+		Iterator<CSVRecord> csvIterator = cp.iterator();
+
+		while (csvIterator.hasNext()) {
+			CSVRecord record = csvIterator.next();
+			try {
+				File keydir = new File(App.MANAGED_SOFTWARE_DIR, "spm/" + record.get(0));
+				File valuedir = new File(record.get(1));
+
+				if (new File(valuedir, "/bin/matlab").exists()) {
+					if (Pattern.matches("R\\d{4}[a-z]", valuedir.getName())) {
+						matlabVersionsMap.put(keydir, valuedir);
+					} else {
+						System.err.println("The preferred MATLAB version (" + valuedir.getAbsolutePath() + ") for "
+								+ keydir.getName() + " cannot be added since this is not a MATLAB directory!");
+					}
+				} else {
+					System.err.println("The preferred MATLAB version (" + valuedir.getAbsolutePath() + ") for "
+							+ keydir.getName() + " cannot be added since the matlab binary cannot be found! - "
+							+ "Please check " + csvFile.getName());
+				}
+
+			} catch (Exception e) {
+			}
+		}
+
+		if (cp != null) {
+			try {
+				cp.close();
+			} catch (IOException e) {
+			}
+		}
+		return matlabVersionsMap;
 	}
 
 	/**

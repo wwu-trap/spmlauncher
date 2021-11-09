@@ -128,6 +128,7 @@ public class FxGuiController extends Application implements Initializable {
 	}
 
 	private HashMap<File, String> tooltips;
+	private HashMap<File, File> preferredMatlabVersions;
 	private JMetro jMetro = new JMetro(Style.LIGHT);
 
 	@Override
@@ -160,10 +161,12 @@ public class FxGuiController extends Application implements Initializable {
 		TooltipManipulator.makeTooltipInstant(tt1);
 		TooltipManipulator.makeTooltipInstant(ttDarkMode);
 
+		preferredMatlabVersions = OSHandler.loadPreferredMatlabVersions();
+
 		/*
 		 * MATLAB versions
 		 */
-		List<File> matlabVersions = OSHandler.getMatlabVersions();
+		List<File> matlabVersions = OSHandler.getMatlabVersions(preferredMatlabVersions);
 		if (matlabVersions != null)
 			matlabComboBox.getItems().addAll(matlabVersions);
 		matlabComboBox.getSelectionModel().selectLast();
@@ -270,12 +273,29 @@ public class FxGuiController extends Application implements Initializable {
 
 	}
 
+	/**
+	 * Selects the preferred MATLAB version directory for the spm installation
+	 * 
+	 * @param spmDir directory of the spm installation
+	 */
+	private void selectPreferredMatlabVersion(File spmDir) {
+		if (preferredMatlabVersions.containsKey(spmDir)) {
+			File preferredMatlabVersion = preferredMatlabVersions.get(spmDir);
+			matlabComboBox.getSelectionModel().select(preferredMatlabVersion);
+		} else {
+			matlabComboBox.getSelectionModel().selectLast();
+		}
+	}
+
 	private LinkedList<ComboBox<File>> comboxBoxList = new LinkedList<>();
 	private int toolboxCount = 0;
 
 	public void chooseSpmVersion(File spmDir) {
 		if (spmDir == null)
 			return;
+
+		selectPreferredMatlabVersion(spmDir);
+
 		toolboxPane.getChildren().clear();
 		comboxBoxList.clear();
 		toolboxCount = 0;
