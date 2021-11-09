@@ -5,7 +5,7 @@ name: Java Publish with Maven
 
 on:
   release:
-    types: [created]
+    types: [published]
 
 jobs:
   build:
