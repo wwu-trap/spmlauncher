@@ -38,16 +38,16 @@ Example:
 ManagedSoftware
 ├── spm
 │   ├── spm12
-│   │   ├── launch.sh (chmod 777)
+│   │   ├── launch.sh (chmod 755)
 │   │   └── toolbox
 │   │       ├── cat
 │   │       └── TFCE
 │   ├── spm5
-│   │   ├── launch.sh (chmod 777)
+│   │   ├── launch.sh (chmod 755)
 │   │   └── toolbox
 │   │       └── TFCE
 │   └── spm8
-│       ├── launch.sh (chmod 777)
+│       ├── launch.sh (chmod 755)
 │       └── toolbox
 │           ├── cat
 │           └── TFCE
