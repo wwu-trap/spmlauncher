@@ -10,6 +10,7 @@ import javax.swing.UIManager;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -98,6 +99,8 @@ public class App {
 		 * CMD Argument Parsing
 		 */
 		final Options options = new Options();
+		Option optionHelp = new Option("h", "help", false, "Print help");
+		options.addOption(optionHelp);
 
 		// General options
 		Option optionNc = new Option("nc", "no-console", false, "no console");
@@ -123,6 +126,12 @@ public class App {
 			line = parser.parse(options, args);
 		} catch (ParseException e2) {
 			e2.printStackTrace();
+		}
+
+		if (line != null && line.hasOption(optionHelp)) {
+			HelpFormatter fmt = new HelpFormatter();
+			fmt.printHelp("java -jar <SPMLauncher jar path> [options]\nWhere options include: ", options);
+			System.exit(0);
 		}
 
 		/*
