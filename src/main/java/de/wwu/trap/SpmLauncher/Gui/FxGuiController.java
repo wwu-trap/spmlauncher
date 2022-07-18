@@ -231,7 +231,7 @@ public class FxGuiController extends Application implements Initializable {
 		/*
 		 * Changelog
 		 */
-		File changelogFile = new File(App.MANAGED_SOFTWARE_DIR, "changelog.md");
+		File changelogFile = new File(App.getManagedSoftwareDir(), "changelog.md");
 		if (changelogFile == null || !changelogFile.exists()) {
 			System.out.println("No or empty changelog! (" + changelogFile.getAbsolutePath() + ")");
 
@@ -300,7 +300,7 @@ public class FxGuiController extends Application implements Initializable {
 		comboxBoxList.clear();
 		toolboxCount = 0;
 
-		File spmToolboxDir = new File(App.MANAGED_SOFTWARE_DIR, "toolbox" + File.separatorChar + spmDir.getName());
+		File spmToolboxDir = new File(App.getManagedSoftwareDir(), "toolbox" + File.separatorChar + spmDir.getName());
 		File[] toolboxes = spmToolboxDir.listFiles((dir) -> dir.isDirectory());
 
 		if (toolboxes != null) {
@@ -455,7 +455,7 @@ public class FxGuiController extends Application implements Initializable {
 		Thread p1 = new Thread() {
 			@Override
 			public void run() {
-				File tmpSpmDir = new File(App.MOUNT_DIR + "/" + App.LAUNCHER_UUID.toString());
+				File tmpSpmDir = new File(App.getMountDir() + "/" + App.LAUNCHER_UUID.toString());
 				File matlabDir = matlabComboBox.getSelectionModel().getSelectedItem();
 				OSHandler.buildLaunchCmdStartAndWait(matlabDir, tmpSpmDir, activatedToolboxes,
 						devmodeCheckBox.isSelected());
