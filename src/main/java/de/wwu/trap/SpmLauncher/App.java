@@ -106,14 +106,14 @@ public class App {
 		options.addOption(optionNofx);
 
 		// Path options
-		Option optionMansofdir = new Option("msd", "managed-software-dir", false,
+		Option optionMansofdir = new Option("msd", "managed-software-dir", true,
 				"Path to the ManagedSoftware directory - place where spm and it's toolboxes are stored. "
 						+ "Be aware to adjust the tmp-mount script accordingly");
 		options.addOption(optionMansofdir);
-		Option optionMountdir = new Option("md", "mount-dir", false,
+		Option optionMountdir = new Option("md", "mount-dir", true,
 				"Path to the directory where the temporary spm dirs are mounted");
 		options.addOption(optionMountdir);
-		Option optionMountscript = new Option("ms", "mount-script", false, "Path to the mount script tmp-mount");
+		Option optionMountscript = new Option("ms", "mount-script", true, "Path to the mount script tmp-mount");
 		options.addOption(optionMountscript);
 
 		// parsing
