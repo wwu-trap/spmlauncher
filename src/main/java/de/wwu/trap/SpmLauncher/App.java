@@ -7,8 +7,16 @@ import java.util.UUID;
 
 import javax.swing.UIManager;
 
-import de.wwu.trap.SpmLauncher.Gui.GuiManager;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 import de.wwu.trap.SpmLauncher.Gui.FxGuiController;
+import de.wwu.trap.SpmLauncher.Gui.GuiManager;
 
 /**
  * 
@@ -22,20 +30,44 @@ public class App {
 	 * constant is changed, be aware that you also have to change the tmp-mount
 	 * script!
 	 */
-	public static final String MANAGED_SOFTWARE_DIR = "/opt/applications/SPMLauncher/ManagedSoftware";
+	public static String getManagedSoftwareDir() {
+		if (managedSoftwareDir != null)
+			return App.managedSoftwareDir;
+		else
+			return App.managedSoftwareDirDefault;
+	}
+
+	private static String managedSoftwareDir = null;
+	private static final String managedSoftwareDirDefault = "/opt/applications/SPMLauncher/ManagedSoftware";
 
 	/**
 	 * The directory in which the temporary mounts this Launcher creates will be
 	 * placed. If this constant is changed, be aware that you also have to change
 	 * the tmp-mount script!
 	 */
-	public static final String MOUNT_DIR = "/tmp/SPMLauncher";
+	public static String getMountDir() {
+		if (App.mountDir != null)
+			return App.mountDir;
+		else
+			return App.mountDirDefault;
+	}
+
+	private static String mountDir = null;
+	private static final String mountDirDefault = "/tmp/SPMLauncher";
 
 	/**
 	 * The mount script which can be called with sudo without having to enter a
-	 * password. SEE comment in tmp-mount script.
+	 * password. See comment in tmp-mount script.
 	 */
-	public static final String MOUNT_SCRIPT = "/usr/local/bin/tmp-mount";
+	public static String getMountScript() {
+		if (App.mountScript != null)
+			return App.mountScript;
+		else
+			return App.mountScriptDefault;
+	}
+
+	private static String mountScript = null;
+	private static String mountScriptDefault = "/usr/local/bin/tmp-mount";
 
 	/**
 	 * The suffix for the name of the file in which the pids of the SPMLauncher and
@@ -62,8 +94,57 @@ public class App {
 	 * @param args the arguments from the commandline
 	 */
 	public static void main(String[] args) {
-		// Create MOUNT_DIR with chmod 777
-		File mountDir = new File(App.MOUNT_DIR);
+
+		/*
+		 * CMD Argument Parsing
+		 */
+		final Options options = new Options();
+		Option optionHelp = new Option("h", "help", false, "Print help");
+		options.addOption(optionHelp);
+
+		// General options
+		Option optionNc = new Option("nc", "no-console", false, "no console");
+		options.addOption(optionNc);
+		Option optionNofx = new Option("nofx", "disable-fx", false, "Disable the fx GUI and use swing");
+		options.addOption(optionNofx);
+
+		// Path options
+		Option optionMansofdir = new Option("msd", "managed-software-dir", true,
+				"Path to the ManagedSoftware directory - place where spm and it's toolboxes are stored. "
+						+ "Be aware to adjust the tmp-mount script accordingly");
+		options.addOption(optionMansofdir);
+		Option optionMountdir = new Option("md", "mount-dir", true,
+				"Path to the directory where the temporary spm dirs are mounted");
+		options.addOption(optionMountdir);
+		Option optionMountscript = new Option("ms", "mount-script", true, "Path to the mount script tmp-mount");
+		options.addOption(optionMountscript);
+
+		// parsing
+		CommandLineParser parser = new DefaultParser();
+		CommandLine line = null;
+		try {
+			line = parser.parse(options, args);
+		} catch (ParseException e2) {
+			e2.printStackTrace();
+		}
+
+		if (line != null && line.hasOption(optionHelp)) {
+			HelpFormatter fmt = new HelpFormatter();
+			fmt.printHelp("java -jar <SPMLauncher jar path> [options]\nWhere options include: ", options);
+			System.exit(0);
+		}
+
+		/*
+		 * Set Options
+		 */
+		App.managedSoftwareDir = line.getOptionValue(optionMansofdir);
+		App.mountDir = line.getOptionValue(optionMountdir);
+		App.mountScript = line.getOptionValue(optionMountscript);
+		
+		/*
+		 * Create mount dir with correct permissions for multiuser environments
+		 */
+		File mountDir = new File(App.getMountDir());
 		if (!mountDir.exists()) {
 			mountDir.mkdirs();
 			mountDir.setReadable(true, false);
@@ -71,30 +152,21 @@ public class App {
 			mountDir.setExecutable(true, false);
 		}
 
-		boolean enableFx = true;
+		if (line != null && line.hasOption(optionNc)) {
+			try {
+				// Write Sysout to logFile if it isn't started with argument
+				// --console or -c
+				File logFile = new File(App.getMountDir(), LAUNCHER_UUID + ".log");
+				System.setOut(new PrintStream(logFile));
+				System.setErr(new PrintStream(logFile));
+			} catch (FileNotFoundException e1) {
 
-		for (String arg : args) {
-			if (arg.equalsIgnoreCase("--no-console") || arg.equalsIgnoreCase("-nc")) {
-				try {
-					// Write Sysout to logFile if it isn't started with argument
-					// --console or -c
-					File logFile = new File(MOUNT_DIR, LAUNCHER_UUID + ".log");
-					System.setOut(new PrintStream(logFile));
-					System.setErr(new PrintStream(logFile));
-				} catch (FileNotFoundException e1) {
-
-				}
 			}
-
-			if (arg.equalsIgnoreCase("--disable-fx")) {
-				enableFx = false;
-			}
-
 		}
 
 		System.out.println("This PID: " + OSHandler.getPid());
 
-		if (!enableFx) {
+		if (line != null && line.hasOption(optionNofx)) {
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			} catch (Exception e) {

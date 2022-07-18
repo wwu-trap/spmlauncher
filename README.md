@@ -11,7 +11,7 @@ mvn package (.jar lands in target/ directory)
 ## Setup
 * create /opt/applications/SPMLauncher/ManagedSoftware/spm with spm installations
 * create /opt/applications/SPMLauncher/ManagedSoftware/toolbox with toolboxes
-* add tmp-mount to /usr/local/bin with 777
+* add tmp-mount to /usr/local/bin with 755 and root as owner
 
 ~~~~
 #!/bin/bash
@@ -19,7 +19,7 @@ mvn package (.jar lands in target/ directory)
 # place this file in /usr/local/bin/tmp-mount
 # to let anyone use this command use, add the following to the !!END!! of the sudoers file:
 # ALL ALL=NOPASSWD: /usr/local/bin/tmp-mount
-# and don't forget to chmod +x this file!
+# and don't forget to execute `chown root` and `chmod +x` on this file!
 
 MANAGED_SOFTWARE_DIR=/opt/applications/SPMLauncher/ManagedSoftware
 MOUNT_DIR=/tmp/SPMLauncher

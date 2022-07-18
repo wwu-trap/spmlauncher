@@ -79,7 +79,7 @@ public class OSHandler {
 	 * @return Paths to the spm installations
 	 */
 	public static File[] getSpmVersions() {
-		File spmDir = new File(App.MANAGED_SOFTWARE_DIR, "spm");
+		File spmDir = new File(App.getManagedSoftwareDir(), "spm");
 		File[] spms = spmDir.listFiles((e) -> e.isDirectory());
 		if (spms != null) {
 			FileManipulator.onlyNameInToString(spms);
@@ -350,7 +350,7 @@ public class OSHandler {
 	/**
 	 * This method mounts the spm installation with the chosen toolboxes to a
 	 * temporary directory (e.g.
-	 * App.MOUNT_DIR/6d9e5da2-cd28-43c8-af46-9f5e3e29d7de), so spm can be started
+	 * App.getMountDir()/6d9e5da2-cd28-43c8-af46-9f5e3e29d7de), so spm can be started
 	 * with and only with the specified toolboxes. It also creates a log file in
 	 * case this Launcher crashes.
 	 * 
@@ -365,7 +365,7 @@ public class OSHandler {
 		 */
 		LinkedList<File> mountedDirs = new LinkedList<>();
 		boolean ret = false;
-		File uuidDir = new File(App.MOUNT_DIR, "/" + App.LAUNCHER_UUID.toString());
+		File uuidDir = new File(App.getMountDir(), "/" + App.LAUNCHER_UUID.toString());
 		uuidDir.mkdirs();
 
 		/*
@@ -469,22 +469,22 @@ public class OSHandler {
 		dirs.sort(new MountedDirComparator());
 
 		for (File dir : dirs) {
-			boolean deleteDir = dir.getAbsolutePath().equals(App.MOUNT_DIR + "/" + uuid);
+			boolean deleteDir = dir.getAbsolutePath().equals(App.getMountDir() + "/" + uuid);
 			umount(dir, deleteDir);
 		}
 
-		File logMount = new File(App.MOUNT_DIR, uuid + App.MOUNT_LOG_SUFFIX);
+		File logMount = new File(App.getMountDir(), uuid + App.MOUNT_LOG_SUFFIX);
 		logMount.delete();
-		File logPid = new File(App.MOUNT_DIR, uuid + App.PID_LOG_SUFFIX);
+		File logPid = new File(App.getMountDir(), uuid + App.PID_LOG_SUFFIX);
 		logPid.delete();
-		File logFile = new File(App.MOUNT_DIR, App.LAUNCHER_UUID + ".log");
+		File logFile = new File(App.getMountDir(), App.LAUNCHER_UUID + ".log");
 		logFile.delete();
 
 	}
 
 	/**
-	 * Tries to unmount dir. dir has to be subdir of App.MOUNT_DIR Tries to unmount
-	 * with sudo App.MOUNT_SCRIPT -u
+	 * Tries to unmount dir. dir has to be subdir of App.getMountDir() Tries to
+	 * unmount with sudo App.getMountScript() -u
 	 * 
 	 * @param dir the dir which will be unmounted
 	 * @return whether the unmount was successfull
@@ -492,13 +492,13 @@ public class OSHandler {
 	private static boolean umount(File dir, boolean delete) {
 		boolean ret = false;
 		String path = dir.getAbsolutePath();
-		if (!path.startsWith(App.MOUNT_DIR + "/")) {
-			System.out.println(dir.getAbsolutePath() + " does not start with " + App.MOUNT_DIR + "/");
+		if (!path.startsWith(App.getMountDir() + "/")) {
+			System.out.println(dir.getAbsolutePath() + " does not start with " + App.getMountDir() + "/");
 			return false;
 		}
-		String relativePath = path.replaceFirst(App.MOUNT_DIR + "/", "");
+		String relativePath = path.replaceFirst(App.getMountDir() + "/", "");
 
-		String[] cmd = new String[] { "sudo", App.MOUNT_SCRIPT, "-u", relativePath };
+		String[] cmd = new String[] { "sudo", App.getMountScript(), "-u", relativePath };
 
 		try {
 			System.out.println("Unmounting with delete=" + delete + " " + dir);
@@ -529,8 +529,8 @@ public class OSHandler {
 
 	/**
 	 * Tries to mount (via rebind) oldDir to newDir. oldDir has to be subdir of
-	 * App.MANAGED_SOFTWARE_DIR and newDir has to be subdir of App.MOUNT_DIR Tries
-	 * to mount with sudo App.MOUNT_SCRIPT -m
+	 * App.getManagedSoftwareDir() and newDir has to be subdir of App.getMountDir()
+	 * Tries to mount with sudo App.getMountScript() -m
 	 * 
 	 * @param oldDir source of the mount
 	 * @param newDir target of the mount
@@ -539,26 +539,26 @@ public class OSHandler {
 	private static boolean mount(File oldDir, File newDir) {
 		boolean ret = false;
 		String oldPath = oldDir.getAbsolutePath();
-		if (!oldPath.startsWith(App.MANAGED_SOFTWARE_DIR + "/")) {
+		if (!oldPath.startsWith(App.getManagedSoftwareDir() + "/")) {
 			System.err.println(
-					"Oldpath starts wrong. Excpected: " + App.MANAGED_SOFTWARE_DIR + "/" + ", recieved: " + oldPath);
+					"Oldpath starts wrong. Excpected: " + App.getManagedSoftwareDir() + "/" + ", recieved: " + oldPath);
 			return false;
 		}
-		String oldRelativePath = oldPath.replaceFirst(App.MANAGED_SOFTWARE_DIR + "/", "");
+		String oldRelativePath = oldPath.replaceFirst(App.getManagedSoftwareDir() + "/", "");
 
 		String newPath = newDir.getAbsolutePath();
-		if (!newPath.startsWith(App.MOUNT_DIR + "/")) {
-			System.err.println("Newpath starts wrong. Excpected: " + App.MOUNT_DIR + "/" + ", recieved: " + newPath);
+		if (!newPath.startsWith(App.getMountDir() + "/")) {
+			System.err.println("Newpath starts wrong. Excpected: " + App.getMountDir() + "/" + ", recieved: " + newPath);
 			return false;
 		}
-		String newRelativePath = newPath.replaceFirst(App.MOUNT_DIR + "/", "");
+		String newRelativePath = newPath.replaceFirst(App.getMountDir() + "/", "");
 
 		if (!newDir.mkdirs() && !newDir.exists()) {
 			System.err.println("Could not create" + newDir.getAbsolutePath());
 			return false;
 		}
 
-		String[] cmd = new String[] { "sudo", App.MOUNT_SCRIPT, "-m", oldRelativePath, newRelativePath };
+		String[] cmd = new String[] { "sudo", App.getMountScript(), "-m", oldRelativePath, newRelativePath };
 
 		try {
 			System.out.println("Mounting " + oldDir.getAbsolutePath() + " to " + newDir.getAbsolutePath());
@@ -592,7 +592,7 @@ public class OSHandler {
 	 */
 	public static HashMap<File, File> loadPreferredMatlabVersions() {
 		HashMap<File, File> matlabVersionsMap = new HashMap<>();
-		File csvFile = new File(App.MANAGED_SOFTWARE_DIR, "preferred_matlab_versions.csv");
+		File csvFile = new File(App.getManagedSoftwareDir(), "preferred_matlab_versions.csv");
 		CSVParser cp;
 		try {
 			Reader reader = new InputStreamReader(new FileInputStream(csvFile));
@@ -608,7 +608,7 @@ public class OSHandler {
 		while (csvIterator.hasNext()) {
 			CSVRecord record = csvIterator.next();
 			try {
-				File keydir = new File(App.MANAGED_SOFTWARE_DIR, "spm/" + record.get(0));
+				File keydir = new File(App.getManagedSoftwareDir(), "spm/" + record.get(0));
 				File valuedir = new File(record.get(1));
 
 				if (new File(valuedir, "/bin/matlab").exists()) {
@@ -651,7 +651,7 @@ public class OSHandler {
 		CSVParser cp;
 		try {
 			Reader reader = new InputStreamReader(
-					new FileInputStream(new File(App.MANAGED_SOFTWARE_DIR, "tooltips.csv")));
+					new FileInputStream(new File(App.getManagedSoftwareDir(), "tooltips.csv")));
 			CSVFormat format = CSVFormat.DEFAULT;
 			format.builder().setCommentMarker('#').build();
 			cp = new CSVParser(reader, format);
@@ -664,7 +664,7 @@ public class OSHandler {
 		while (csvIterator.hasNext()) {
 			CSVRecord record = csvIterator.next();
 			try {
-				File dir = new File(App.MANAGED_SOFTWARE_DIR, record.get(0));
+				File dir = new File(App.getManagedSoftwareDir(), record.get(0));
 				tooltipsMap.put(dir, record.get(1).replace("\\n", "\n"));
 			} catch (Exception e) {
 			}
