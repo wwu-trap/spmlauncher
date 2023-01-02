@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.UUID;
 
-import javax.swing.UIManager;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -16,7 +14,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import de.wwu.trap.SpmLauncher.Gui.FxGuiController;
-import de.wwu.trap.SpmLauncher.Gui.GuiManager;
 
 /**
  * 
@@ -105,8 +102,6 @@ public class App {
 		// General options
 		Option optionNc = new Option("nc", "no-console", false, "no console");
 		options.addOption(optionNc);
-		Option optionNofx = new Option("nofx", "disable-fx", false, "Disable the fx GUI and use swing");
-		options.addOption(optionNofx);
 
 		// Path options
 		Option optionMansofdir = new Option("msd", "managed-software-dir", true,
@@ -166,16 +161,6 @@ public class App {
 
 		System.out.println("This PID: " + OSHandler.getPid());
 
-		if (line != null && line.hasOption(optionNofx)) {
-			try {
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			} catch (Exception e) {
-
-			}
-			new GuiManager().startGui();
-		} else {
-			FxGuiController.launch(FxGuiController.class, args);
-		}
-
+		FxGuiController.launch(FxGuiController.class, args);
 	}
 }

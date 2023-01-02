@@ -136,16 +136,6 @@ public class OSHandler {
 
 	public static Process p;
 
-	private static String activatedToolboxesToString(List<File> activatedToolboxes) {
-		String toolboxesAsString = "";
-		for (File activatedToolbox : activatedToolboxes) {
-			if (!toolboxesAsString.equalsIgnoreCase("")) {
-				toolboxesAsString += " ";
-			}
-			toolboxesAsString += activatedToolbox.getName();
-		}
-		return toolboxesAsString;
-	}
 
 	private static String generateMatlabPathCommand(File tmpSpmDir, List<File> activatedToolboxes) {
 		/*
@@ -269,78 +259,6 @@ public class OSHandler {
 			 * SPMLauncher closes
 			 */
 			new ProcessBuilder().command("stty", "sane").inheritIO().start();
-		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	/**
-	 * This method searches for the launch_command.txt within the spmDir and starts
-	 * the spm installation with it
-	 * 
-	 * @param tmpSpmDir          the temporary mount SPM directory with a launch.sh
-	 *                           in it
-	 * @param activatedToolboxes
-	 * @return
-	 */
-	public static void startSpmAndWait(File tmpSpmDir, List<File> activatedToolboxes, boolean devmode) {
-
-		String pathToolboxes = activatedToolboxesToString(whichToolboxesNeedPathEntry(activatedToolboxes));
-		String pathToolboxesRec = activatedToolboxesToString(whichToolboxesNeedRecursivePathEntry(activatedToolboxes));
-
-		System.out.println("Starting " + tmpSpmDir.getName());
-		String[] launchCommand = { tmpSpmDir.getAbsolutePath() + "/launch.sh", tmpSpmDir.getAbsolutePath(),
-				pathToolboxes, pathToolboxesRec, devmode ? "devmode" : "" };
-
-		/*
-		 * Start spm and wait
-		 */
-		try {
-			ProcessBuilder pb = new ProcessBuilder(launchCommand);
-
-			p = pb.start();
-
-			Thread p1 = new Thread() {
-				@Override
-				public void run() {
-					BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-					String line = "";
-					try {
-						while ((line = br.readLine()) != null) {
-							System.out.println(line);
-							if (line.contains("Bye for now...")) {
-								System.out.println("Killing SPM because of \">> Bye for now...\"");
-								p.destroy();
-							}
-						}
-					} catch (IOException e) {
-					}
-				}
-			};
-			p1.start();
-
-			Thread p2 = new Thread() {
-				@Override
-				public void run() {
-					BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-					String line = "";
-					try {
-						while ((line = br.readLine()) != null) {
-							System.err.println(line);
-							if (line.contains(">> Bye for now...")) {
-								System.out.println("Killing SPM because of \">> Bye for now...\"");
-								p.destroy();
-							}
-						}
-					} catch (IOException e) {
-					}
-				}
-			};
-			p2.start();
-
-			p.waitFor();
-
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
