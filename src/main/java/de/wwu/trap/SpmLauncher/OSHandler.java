@@ -1,23 +1,20 @@
 package de.wwu.trap.SpmLauncher;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -27,7 +24,6 @@ import org.apache.commons.csv.CSVRecord;
 
 import de.wwu.trap.SpmLauncher.Utils.FileComparator;
 import de.wwu.trap.SpmLauncher.Utils.FileManipulator;
-import de.wwu.trap.SpmLauncher.Utils.MountedDirComparator;
 import de.wwu.trap.SpmLauncher.Utils.RedirectInputStreamFiltered;
 
 /**
@@ -49,7 +45,7 @@ public class OSHandler {
 		for (File activatedToolbox : activatedToolboxes) {
 			File pathFile = new File(activatedToolbox.getParentFile(), "addToPath");
 			if (pathFile.exists())
-				pathToolboxes.add(activatedToolbox.getParentFile());
+				pathToolboxes.add(activatedToolbox);
 		}
 		return pathToolboxes;
 	}
@@ -67,7 +63,7 @@ public class OSHandler {
 		for (File activatedToolbox : activatedToolboxes) {
 			File pathFile = new File(activatedToolbox.getParentFile(), "addToPathRecursively");
 			if (pathFile.exists())
-				pathToolboxes.add(activatedToolbox.getParentFile());
+				pathToolboxes.add(activatedToolbox);
 		}
 		return pathToolboxes;
 	}
@@ -136,25 +132,30 @@ public class OSHandler {
 
 	public static Process p;
 
+	private static File globalToStaticToolboxDir(File spmDir, File toolboxDir) {
+		String toolboxName = toolboxDir.getParentFile().getName();
+		File spmToolboxDir = new File(spmDir, "toolbox");
+		File tmpToolboxDir = new File(spmToolboxDir, toolboxName);
+		return tmpToolboxDir;
+	}
 
-	private static String generateMatlabPathCommand(File tmpSpmDir, List<File> activatedToolboxes) {
+	private static String generateMatlabPathCommand(File tmpSpmDir, List<File> activatedToolboxes,
+			HashMap<String, String> toolboxBinds) {
 		/*
 		 * Map the toolbox dirs from the source directory e.g.
 		 * .../ManagedSoftare/toolbox/spm12/cat12/r1742 to the tmp spm dir under
 		 * /tmp/SPMLauncher/1e1a0082-7595-457b-8afb-91230a58d0d4/toolbox/cat12
 		 */
-		File spmToolboxDir = new File(tmpSpmDir, "toolbox");
 		HashMap<File, File> tmpActivatedToolboxDirs = new HashMap<>();
 
 		for (File toolboxDir : activatedToolboxes) {
-			String toolboxName = toolboxDir.getParentFile().getName();
-			File tmpToolboxDir = new File(spmToolboxDir, toolboxName);
+			File tmpToolboxDir = globalToStaticToolboxDir(tmpSpmDir, toolboxDir);
 			try {
-				toolboxDir = toolboxDir.getCanonicalFile().getParentFile();
+				File toolboxDirParent = toolboxDir.getCanonicalFile().getParentFile();
+				tmpActivatedToolboxDirs.put(toolboxDirParent, tmpToolboxDir);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			tmpActivatedToolboxDirs.put(toolboxDir, tmpToolboxDir);
 		}
 
 		/*
@@ -175,7 +176,7 @@ public class OSHandler {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			sb.append("path('" + tmpActivatedToolboxDirs.get(toolbox) + "',path);");
+			sb.append("path('" + tmpActivatedToolboxDirs.get(toolbox.getParentFile()) + "',path);");
 		}
 
 		for (File toolbox : toolboxesRec) {
@@ -184,15 +185,19 @@ public class OSHandler {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			File tmpToolbox = tmpActivatedToolboxDirs.get(toolbox);
+			File tmpToolbox = tmpActivatedToolboxDirs.get(toolbox.getParentFile());
 			if (tmpToolbox == null) {
 				System.out.println("Error: " + toolbox.getAbsolutePath());
 				continue;
 			}
 			try {
-				Files.walk(Paths.get(tmpToolbox.getAbsolutePath())).filter(Files::isDirectory).forEach(path -> {
-					System.out.println(path);
-					sb.append("path('" + path + "',path);");
+				Files.walk(Paths.get(toolbox.getAbsolutePath())).filter(Files::isDirectory).forEach(path -> {
+					String pathStr = path.toString();
+					for (Map.Entry<String, String> toolboxBindEntry : toolboxBinds.entrySet()) {
+						pathStr = pathStr.replace(toolboxBindEntry.getKey(), toolboxBindEntry.getValue());
+					}
+					System.out.println(pathStr);
+					sb.append("path('" + pathStr + "',path);");
 				});
 				;
 			} catch (IOException e) {
@@ -201,6 +206,35 @@ public class OSHandler {
 		}
 
 		return sb.toString();
+	}
+
+	private static HashMap<String, String> generateToolboxBinds(File spmDir, List<File> activatedToolboxes) {
+		File spmToolboxDir = new File(spmDir, "toolbox");
+		HashMap<String, String> toolboxBinds = new HashMap<>();
+
+		for (File toolboxDir : activatedToolboxes) {
+			String toolboxName = toolboxDir.getParentFile().getName();
+			File tmpToolboxDir = new File(spmToolboxDir, toolboxName);
+			try {
+				toolboxDir = toolboxDir.getCanonicalFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			toolboxBinds.put(toolboxDir.getAbsolutePath(), tmpToolboxDir.getAbsolutePath());
+		}
+		return toolboxBinds;
+	}
+
+	private static LinkedList<String> generateToolboxBindsParameters(HashMap<String, String> toolboxBinds) {
+		LinkedList<String> toolboxBindParameters = new LinkedList<>();
+
+		for (Map.Entry<String, String> entry : toolboxBinds.entrySet()) {
+			toolboxBindParameters.add("--bind");
+			toolboxBindParameters.add(entry.getKey());
+			toolboxBindParameters.add(entry.getValue());
+		}
+		
+		return toolboxBindParameters;
 	}
 
 	/**
@@ -212,18 +246,32 @@ public class OSHandler {
 	 * @param activatedToolboxes
 	 * @param devmode
 	 */
-	public static void buildLaunchCmdStartAndWait(File matlabDir, File tmpSpmDir, List<File> activatedToolboxes,
+	public static void buildLaunchCmdStartAndWait(File matlabDir, File spmDir, List<File> activatedToolboxes,
 			boolean devmode) {
 		System.out.println(matlabDir.getAbsolutePath());
-		System.out.println("Starting " + tmpSpmDir.getName());
+		System.out.println("Starting " + spmDir.getName());
+
+		HashMap<String, String> toolboxBinds = generateToolboxBinds(spmDir, activatedToolboxes);
+		LinkedList<String> toolboxBindParameters = generateToolboxBindsParameters(toolboxBinds);
 
 		LinkedList<String> launchCommand = new LinkedList<>();
 		launchCommand.add("nice");
 		launchCommand.add("-n");
 		launchCommand.add("+1");
+		launchCommand.add("bwrap");
+		launchCommand.add("--bind");
+		launchCommand.add("/");
+		launchCommand.add("/");
+		launchCommand.add("--dev-bind");
+		launchCommand.add("/dev");
+		launchCommand.add("/dev");
+//		launchCommand.add("--bind");
+//		launchCommand.add(spmDir.getAbsolutePath());
+//		launchCommand.add(tmpSpmDir.getAbsolutePath());
+		launchCommand.addAll(toolboxBindParameters);
 		launchCommand.add(matlabDir.getAbsolutePath() + "/bin/matlab"); // absolute path to matlab binary
 		launchCommand.add("-r");
-		String matlabCommands = generateMatlabPathCommand(tmpSpmDir, activatedToolboxes) + "cd('/spm-data');"
+		String matlabCommands = generateMatlabPathCommand(spmDir, activatedToolboxes, toolboxBinds) + "cd('/spm-data');"
 				+ "spm fmri;"
 //				+ "quit"
 		;
@@ -265,92 +313,6 @@ public class OSHandler {
 
 	}
 
-	/**
-	 * This method mounts the spm installation with the chosen toolboxes to a
-	 * temporary directory (e.g.
-	 * App.getMountDir()/6d9e5da2-cd28-43c8-af46-9f5e3e29d7de), so spm can be started
-	 * with and only with the specified toolboxes. It also creates a log file in
-	 * case this Launcher crashes.
-	 * 
-	 * @param spmDir    the path to the chosen spm installation
-	 * @param toolboxes the paths to the chosen versions of the toolboxes
-	 * @return a LinkedList with the dirs which has been mounted successfully
-	 */
-	public static LinkedList<File> createMounts(File spmDir, Collection<File> toolboxes) {
-
-		/*
-		 * Preparations
-		 */
-		LinkedList<File> mountedDirs = new LinkedList<>();
-		boolean ret = false;
-		File uuidDir = new File(App.getMountDir(), "/" + App.LAUNCHER_UUID.toString());
-		uuidDir.mkdirs();
-
-		/*
-		 * Start the FileWriters
-		 */
-		PrintWriter pwPids = null;
-		PrintWriter pwMounts = null;
-		try {
-			File pidLogFile = new File(uuidDir.getAbsolutePath() + App.PID_LOG_SUFFIX);
-			pidLogFile.createNewFile();
-			pwPids = new PrintWriter(new FileOutputStream(pidLogFile), true);
-
-			File mountLogFile = new File(uuidDir.getAbsolutePath() + App.MOUNT_LOG_SUFFIX);
-			mountLogFile.createNewFile();
-			pwMounts = new PrintWriter(new FileOutputStream(mountLogFile), true);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return mountedDirs;
-		}
-
-		pwPids.println("SPMLauncher," + getPid());
-
-		/*
-		 * Create the mounts
-		 */
-		ret = mount(spmDir, uuidDir);
-		if (ret) {
-			mountedDirs.add(uuidDir);
-			pwMounts.println(uuidDir);
-			pwMounts.flush();
-		} else {
-			pwPids.close();
-			pwMounts.close();
-			return mountedDirs;
-		}
-
-		for (File toolbox : toolboxes) {
-			File mountedToolboxDir = new File(uuidDir.getAbsolutePath(),
-					"/toolbox/" + toolbox.getParentFile().getName());
-
-			ret = ret && mount(toolbox, mountedToolboxDir);
-			if (ret) {
-				mountedDirs.add(mountedToolboxDir);
-				pwMounts.println(mountedToolboxDir);
-				pwMounts.flush();
-			} else {
-				pwPids.close();
-				pwMounts.close();
-				return mountedDirs;
-			}
-		}
-
-		/*
-		 * Finishing this method
-		 */
-		if (pwPids != null) {
-			pwPids.flush();
-			pwPids.close();
-		}
-		if (pwMounts != null) {
-			pwMounts.flush();
-			pwMounts.close();
-		}
-
-		return mountedDirs;
-	}
-
 	public static long getPid() {
 		return ProcessHandle.current().pid();
 	}
@@ -370,134 +332,6 @@ public class OSHandler {
 
 		// TODO check whether an spm installation has an launch.sh
 		// inside the spm dir
-		return ret;
-	}
-
-	/**
-	 * This method unmounts a list of directories. The list doesn't need to be
-	 * sorted. If subdirs of dirs has to be unmounted before the parent, and the
-	 * parent is in this list, the subdir will be unmounted before the parentdir.
-	 * 
-	 * @param dirs the directories which shall be unmounted
-	 */
-	public static void umountAllDirs(List<File> dirs, String uuid) {
-		if (dirs == null) {
-			return;
-		}
-		dirs.sort(new MountedDirComparator());
-
-		for (File dir : dirs) {
-			boolean deleteDir = dir.getAbsolutePath().equals(App.getMountDir() + "/" + uuid);
-			umount(dir, deleteDir);
-		}
-
-		File logMount = new File(App.getMountDir(), uuid + App.MOUNT_LOG_SUFFIX);
-		logMount.delete();
-		File logPid = new File(App.getMountDir(), uuid + App.PID_LOG_SUFFIX);
-		logPid.delete();
-		File logFile = new File(App.getMountDir(), App.LAUNCHER_UUID + ".log");
-		logFile.delete();
-
-	}
-
-	/**
-	 * Tries to unmount dir. dir has to be subdir of App.getMountDir() Tries to
-	 * unmount with sudo App.getMountScript() -u
-	 * 
-	 * @param dir the dir which will be unmounted
-	 * @return whether the unmount was successfull
-	 */
-	private static boolean umount(File dir, boolean delete) {
-		boolean ret = false;
-		String path = dir.getAbsolutePath();
-		if (!path.startsWith(App.getMountDir() + "/")) {
-			System.out.println(dir.getAbsolutePath() + " does not start with " + App.getMountDir() + "/");
-			return false;
-		}
-		String relativePath = path.replaceFirst(App.getMountDir() + "/", "");
-
-		String[] cmd = new String[] { "sudo", App.getMountScript(), "-u", relativePath };
-
-		try {
-			System.out.println("Unmounting with delete=" + delete + " " + dir);
-			Process p = new ProcessBuilder(cmd).start();
-
-			// BufferedReader br = new BufferedReader(new
-			// InputStreamReader(p.getErrorStream()));
-			// String line = "";
-			// while ((line = br.readLine()) != null) {
-			// System.out.println(line);
-			// }
-
-			ret = p.waitFor() == 0;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-
-		if (dir != null & delete) {
-			boolean empty = dir.listFiles().length == 0;
-			if (dir.exists() && dir.isDirectory() && empty) {
-				dir.delete();
-			}
-
-		}
-		return ret;
-	}
-
-	/**
-	 * Tries to mount (via rebind) oldDir to newDir. oldDir has to be subdir of
-	 * App.getManagedSoftwareDir() and newDir has to be subdir of App.getMountDir()
-	 * Tries to mount with sudo App.getMountScript() -m
-	 * 
-	 * @param oldDir source of the mount
-	 * @param newDir target of the mount
-	 * @return Whether the mount was successfull
-	 */
-	private static boolean mount(File oldDir, File newDir) {
-		boolean ret = false;
-		String oldPath = oldDir.getAbsolutePath();
-		if (!oldPath.startsWith(App.getManagedSoftwareDir() + "/")) {
-			System.err.println(
-					"Oldpath starts wrong. Excpected: " + App.getManagedSoftwareDir() + "/" + ", recieved: " + oldPath);
-			return false;
-		}
-		String oldRelativePath = oldPath.replaceFirst(App.getManagedSoftwareDir() + "/", "");
-
-		String newPath = newDir.getAbsolutePath();
-		if (!newPath.startsWith(App.getMountDir() + "/")) {
-			System.err.println("Newpath starts wrong. Excpected: " + App.getMountDir() + "/" + ", recieved: " + newPath);
-			return false;
-		}
-		String newRelativePath = newPath.replaceFirst(App.getMountDir() + "/", "");
-
-		if (!newDir.mkdirs() && !newDir.exists()) {
-			System.err.println("Could not create" + newDir.getAbsolutePath());
-			return false;
-		}
-
-		String[] cmd = new String[] { "sudo", App.getMountScript(), "-m", oldRelativePath, newRelativePath };
-
-		try {
-			System.out.println("Mounting " + oldDir.getAbsolutePath() + " to " + newDir.getAbsolutePath());
-			Process p = new ProcessBuilder(cmd).start();
-
-			// BufferedReader br = new BufferedReader(new
-			// InputStreamReader(p.getErrorStream()));
-			// String line = "";
-			// while ((line = br.readLine()) != null) {
-			// System.out.println(line);
-			// }
-			//
-			ret = p.waitFor() == 0;
-			if (!ret) {
-				System.err.println("Could not mount " + oldDir + " to " + newDir);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-
 		return ret;
 	}
 
