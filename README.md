@@ -1,36 +1,21 @@
 # README #
 
 ## Requirements
-* Maven
-* Java 11
+* Java 11 JRE (or higher)
+* bwrap command (bubblewrap)
+  * Ubuntu: `sudo apt install bubblewrap`
+  * source: https://github.com/containers/bubblewrap
 
 ## Build
-compile with:
-mvn package (.jar lands in target/ directory)
+### Additional build requirements
+* Java 11 **JDK** (or higher)
+* Maven
+
+Compile with: `mvn package` - the SPMLauncher jar lands in `target/` directory
 
 ## Setup
 * create /opt/applications/SPMLauncher/ManagedSoftware/spm with spm installations
 * create /opt/applications/SPMLauncher/ManagedSoftware/toolbox with toolboxes
-* add tmp-mount to /usr/local/bin with 755 and root as owner
-
-~~~~
-#!/bin/bash
-
-# place this file in /usr/local/bin/tmp-mount
-# to let anyone use this command use, add the following to the !!END!! of the sudoers file:
-# ALL ALL=NOPASSWD: /usr/local/bin/tmp-mount
-# and don't forget to execute `chown root` and `chmod +x` on this file!
-
-MANAGED_SOFTWARE_DIR=/opt/applications/SPMLauncher/ManagedSoftware
-MOUNT_DIR=/tmp/SPMLauncher
-
-if [ "$1" = "-m" ] ; then
-        /bin/mount --bind $MANAGED_SOFTWARE_DIR/$2 $MOUNT_DIR/$3
-        /bin/mount --make-slave $MOUNT_DIR/$3
-elif [ "$1" = "-u" ] ; then
-        /bin/umount -l $MOUNT_DIR/$2
-fi
-~~~~
 
 
 Example:
@@ -38,27 +23,30 @@ Example:
 ManagedSoftware
 ├── spm
 │   ├── spm12
-│   │   ├── launch.sh (chmod 755)
+│   │   ├── ...other spm12 files...
 │   │   └── toolbox
-│   │       ├── cat
-│   │       └── TFCE
+│   │       ├── cat *
+│   │       └── TFCE *
 │   ├── spm5
-│   │   ├── launch.sh (chmod 755)
+│   │   ├── ...other spm5 files...
 │   │   └── toolbox
-│   │       └── TFCE
+│   │       └── TFCE *
 │   └── spm8
-│       ├── launch.sh (chmod 755)
+│       ├── ...other spm8 files...
 │       └── toolbox
-│           ├── cat
-│           └── TFCE
+│           ├── cat *
+│           └── TFCE *
 └── toolbox
     ├── spm12
     │   ├── cat
+    |   │   ├── standard -> this file will load cat12 on default
+    |   │   ├── addToPath -> this file will add the cat12 toolbox to path
     │   │   ├── v1
     │   │   ├── v2
     │   │   ├── v3
     │   │   └── v4
     │   └── TFCE
+    |       ├── addToPathRecursively this file will add the TFCE toolbox and all its subdirs to path
     │       ├── v2.3
     │       ├── v2.5
     │       └── v2.7
@@ -72,4 +60,7 @@ ManagedSoftware
             ├── v2.3
             └── v2.5
 ~~~~            
-Every toolbox needs a subdirectory in the toolbox-directory of the spm installation with the excact same name!
+\*: These are empty directories as placeholder where the toolbox will be loaded to. I.e. for every toolbox you needs a subdirectory in the spm/spm12/toolbox directory with the exact same name! E.g. if you want to install the conn toolbox with version v21.a for spm12, do the following:
+  1. create toolbox dir: toolbox/spm12/conn/v21.a
+  2. download and unzip conn v21.a this directory
+  3. create placeholder (empty) dir in spm12 installation spm/spm12/toolbox/conn
