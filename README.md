@@ -43,7 +43,7 @@ ManagedSoftware
     ├── spm12
     │   ├── cat
     |   │   ├── standard -> this file will load cat12 on default
-    |   │   ├── addToPath -> this file will add the cat12 toolbox to path
+    |   │   ├── addToPath -> this file will add the cat12 toolbox to matlab path
     │   │   ├── v1
     │   │   ├── v2
     │   │   ├── v3
