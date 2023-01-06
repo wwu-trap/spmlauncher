@@ -1,4 +1,7 @@
 # README #
+Do you ever wonder how to handle all the toolboxes written for spm and how to keep track of its different versions? This issue is especially complicated in a multi-user environment. SPMLauncer can help you with this: it provides an overview over your SPM and MATLAB installations, allows you to quickly enable or disable toolboxes and switch versions.
+
+![SPMLauncher GUI preview](https://github.com/wwu-trap/spmlauncher/blob/main/assets/SPMLauncher-v3.0.0.png?raw=true)
 
 ## Requirements
 * Java 11 JRE (or higher)
