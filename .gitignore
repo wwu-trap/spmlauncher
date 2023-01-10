@@ -18,6 +18,7 @@
 *.tar.gz
 *.rar
 
+dist/
 target/
 pom.xml.tag
 pom.xml.releaseBackup

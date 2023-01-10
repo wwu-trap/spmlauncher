@@ -1,0 +1,8 @@
+--name SPMLauncher
+--type app-image
+--input ./dist/jar/
+--dest ./dist/
+--icon ./src/main/resources/spm12.png
+--copyright GPLv3
+--description "SPMLauncher provides an overview over your SPM and MATLAB installations, allows you to quickly enable or disable toolboxes and switch versions."
+--vendor "University of Muenster, Institute for Translational Psychiatry"

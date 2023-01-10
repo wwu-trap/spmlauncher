@@ -24,10 +24,28 @@ jobs:
       run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$(git describe --tags)
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    - name: JPackage preparation
+      run: |
+        mkdir -p ./dist/jar/
+        cp target/SPMLauncher-*.jar ./dist/jar/
+    - name: JPackage AppImage
+      run: |
+        jpackage --main-jar SPMLauncher-$(git describe --tags).jar --app-version $(git describe --tags) @JPackage-appimage.txt
+        cd dist
+        tar cfz spmlauncher_$(git describe --tags)_amd64-appimage.tar.gz SPMLauncher/
+        rm -rf SPMLauncher/
+        cd ..
+    - name: JPackage deb
+      run: jpackage --main-jar SPMLauncher-$(git describe --tags).jar --app-version $(git describe --tags) @JPackage-deb.txt 
+    - name: Clean dist dir
+      run: |
+        cd dist
+        mv jar/* .
+        rmdir jar
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
-        files: target/SPMLauncher-*.jar
+        files: dist/*
         name: SPMLauncher v${{ github.event.release.tag_name }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
