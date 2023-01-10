@@ -251,7 +251,13 @@ public class OSHandler {
 		System.out.println(matlabDir.getAbsolutePath());
 		System.out.println("Starting " + spmDir.getName());
 
-		HashMap<String, String> toolboxBinds = generateToolboxBinds(spmDir, activatedToolboxes);
+		String tmpSpmDirStr = App.getMountDir();
+		File tmpSpmDir = spmDir;
+		if (tmpSpmDirStr != null)
+			tmpSpmDir = new File(tmpSpmDirStr);
+
+
+		HashMap<String, String> toolboxBinds = generateToolboxBinds(tmpSpmDir, activatedToolboxes);
 		LinkedList<String> toolboxBindParameters = generateToolboxBindsParameters(toolboxBinds);
 
 		LinkedList<String> launchCommand = new LinkedList<>();
@@ -265,13 +271,16 @@ public class OSHandler {
 		launchCommand.add("--dev-bind");
 		launchCommand.add("/dev");
 		launchCommand.add("/dev");
-//		launchCommand.add("--bind");
-//		launchCommand.add(spmDir.getAbsolutePath());
-//		launchCommand.add(tmpSpmDir.getAbsolutePath());
+		if (tmpSpmDir != spmDir) {
+			launchCommand.add("--bind");
+			launchCommand.add(spmDir.getAbsolutePath());
+			launchCommand.add(tmpSpmDir.getAbsolutePath());
+		}
 		launchCommand.addAll(toolboxBindParameters);
 		launchCommand.add(matlabDir.getAbsolutePath() + "/bin/matlab"); // absolute path to matlab binary
 		launchCommand.add("-r");
-		String matlabCommands = generateMatlabPathCommand(spmDir, activatedToolboxes, toolboxBinds) + "cd('/spm-data');"
+		String matlabCommands = generateMatlabPathCommand(tmpSpmDir, activatedToolboxes, toolboxBinds)
+				+ "cd('/spm-data');"
 				+ "spm fmri;"
 //				+ "quit"
 		;

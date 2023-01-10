@@ -43,14 +43,10 @@ public class App {
 	 * the tmp-mount script!
 	 */
 	public static String getMountDir() {
-		if (App.mountDir != null)
-			return App.mountDir;
-		else
-			return App.mountDirDefault;
+		return App.mountDir;
 	}
 
 	private static String mountDir = null;
-	private static final String mountDirDefault = "/tmp/SPMLauncher";
 
 	/**
 	 * The mount script which can be called with sudo without having to enter a
@@ -111,8 +107,6 @@ public class App {
 		Option optionMountdir = new Option("md", "mount-dir", true,
 				"Path to the directory where the temporary spm dirs are mounted");
 		options.addOption(optionMountdir);
-		Option optionMountscript = new Option("ms", "mount-script", true, "Path to the mount script tmp-mount");
-		options.addOption(optionMountscript);
 
 		// parsing
 		CommandLineParser parser = new DefaultParser();
@@ -134,18 +128,6 @@ public class App {
 		 */
 		App.managedSoftwareDir = line.getOptionValue(optionMansofdir);
 		App.mountDir = line.getOptionValue(optionMountdir);
-		App.mountScript = line.getOptionValue(optionMountscript);
-		
-		/*
-		 * Create mount dir with correct permissions for multiuser environments
-		 */
-		File mountDir = new File(App.getMountDir());
-		if (!mountDir.exists()) {
-			mountDir.mkdirs();
-			mountDir.setReadable(true, false);
-			mountDir.setWritable(true, false);
-			mountDir.setExecutable(true, false);
-		}
 
 		if (line != null && line.hasOption(optionNc)) {
 			try {
