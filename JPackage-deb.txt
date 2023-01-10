@@ -1,5 +1,5 @@
 --name SPMLauncher
---type app-image
+--type deb
 --input ./dist/jar/
 --dest ./dist/
 --icon ./src/main/resources/spm12.png
