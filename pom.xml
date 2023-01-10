@@ -5,7 +5,7 @@
 
 	<groupId>de.wwu.trap</groupId>
 	<artifactId>SPMLauncher</artifactId>
-	<version>3.0.0</version>
+	<version>0.0.0-noversion</version>
 	<packaging>jar</packaging>
 
 	<name>SPMLauncher</name>

@@ -21,6 +21,8 @@ jobs:
         java-version: 11
         distribution: 'zulu'
         java-package: jdk
+    - name: Derive version from Git tag
+      run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$(git describe --tags)
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - uses: actions/upload-artifact@v3
