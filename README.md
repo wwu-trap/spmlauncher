@@ -4,10 +4,10 @@ Do you ever wonder how to handle all the toolboxes written for spm and how to ke
 ![SPMLauncher GUI preview](https://github.com/wwu-trap/spmlauncher/blob/main/assets/SPMLauncher-v3.0.0.png?raw=true)
 
 ## Requirements
-* Java 11 JRE (or higher)
 * bwrap command (bubblewrap)
   * Ubuntu: `sudo apt install bubblewrap`
   * source: https://github.com/containers/bubblewrap
+* Only if using jar: Java 11 JRE (or higher)
 
 ## Build
 ### Additional build requirements
